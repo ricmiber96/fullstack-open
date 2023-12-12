@@ -1,27 +1,17 @@
-import { useState, useEffect } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useEffect, useState } from 'react'
 import './App.css'
-
-const PhoneNumbers = ({ persons }) => {
-  return (
-    <ul>
-      {persons.map(person => <li key={person.id}>{person.name} | {person.number}</li>)}
-    </ul>
-  )
-}
-
+import Filter from './components/Filter'
+import PersonForm from './components/PersonForm'
+import PhoneNumbers from './components/PhoneNumbers'
+import contactService from './services/contact'
+import Notification from './components/Notification'
 
 function App() {
 
-  const [persons, setPersons] = useState([
-    {  id: window.crypto.randomUUID(), name: 'Arto Hellas', number: '040-123456' },
-    {  id: window.crypto.randomUUID(), name: 'Ada Lovelace', number: '39-44-5323523' },
-    {  id: window.crypto.randomUUID(), name: 'Dan Abramov', number: '12-43-234345' },
-    {  id: window.crypto.randomUUID(), name: 'Mary Poppendieck', number: '39-23-6423122' }
-  ])
-
-  const [filteredPersons, setFilteredPersons] = useState(persons)
+  const [persons, setPersons] = useState([])
+  const [visible, setVisible] = useState(false)
+  const [isError, setIsError] = useState(false)
+  const [message, setMessage] = useState('')
 
   const [newPerson, setNewPerson] = useState({
     id: window.crypto.randomUUID(),
@@ -29,36 +19,64 @@ function App() {
     number: ''
   })
 
+  const getContacts = async () => {
+    await contactService.getAllContacts()
+      .then(res => setPersons(res) )
+      .catch(err => console.log(err))
+  }
+
+  useEffect(() => {
+    getContacts()
+  }, [])
+
   const [search, setSearch] = useState('')
   
+  const filteredPersons = search ? persons.filter(person => person.name.toLowerCase().includes(search.toLowerCase()))
+  : persons;
 
   const addPerson = (e) => {
     e.preventDefault()
-    if(persons.some(person => person.name === newPerson.name)) {
-      alert(`${newPerson.name} is already added to phonebook`)
-      return
+    if((persons.some(person => person.name === newPerson.name)) && window.confirm(`${newPerson.name} is already added to phonebook, replace the old number with a new one?`)){
+        const person = persons.find(person => person.name === newPerson.name)
+        contactService.updateContact(person.id, newPerson)
+          .then(res => {
+            setPersons(persons.map(person => person.id !== res.id ? person : res))
+            setMessage(`${newPerson.name} has been updated`)
+          })
+          .catch((err) => {
+            setMessage(`${newPerson.name} has already been deleted from the server`)
+            setIsError(true)
+          })   
+          setNewPerson({
+            id: window.crypto.randomUUID(),
+            name: '',
+            number: ''
+          })
+      }
+    else {
+      contactService.addContact(newPerson)
+      .then(res => {
+        setPersons([...persons, res])
+        setNewPerson({
+          id: window.crypto.randomUUID(),
+          name: '',
+          number: ''
+        })
+      })
+      .catch(err => console.log(err))
+      setMessage(`${newPerson.name} has been added`)
+      setIsError(false)
     }
-    setPersons([...persons, newPerson])
-    setNewPerson({
-      id: window.crypto.randomUUID(),
-      name: '',
-      number: ''
-    })
+      setVisible(true)
+      setTimeout(() => {
+          setVisible(false)
+        }, 5000)
   }
 
   const handleSearch = (e) => {
     e.preventDefault()
     setSearch(e.target.value)
-    console.log(search,persons)
   }
-
-  useEffect(() => {
-    search === '' ? setFilteredPersons(persons) : 
-    setFilteredPersons(persons.filter(person => person.name.toLowerCase().includes(search.toLowerCase())))
-  }, [search])
-  
-
-
 
   const handleOnChange = (e) => {
     let {name, value} = e.target
@@ -76,26 +94,29 @@ function App() {
 
   }
 
+  const handleDelete = (id) => {
+    if(window.confirm('Are you sure you want to delete this contact?')){
+    contactService.deleteContact(id)
+      .then(() => {
+        setPersons(persons.filter(person => person.id !== id))
+      })
+      .catch(err => console.log(err))
+    }
+    setMessage(`${newPerson.name} has been deleted`)
+  }
+
   return (
     <div>
-      <h2>Phonebook</h2>
-      <label htmlFor="search">Search: </label>
-      <input name='search' placeholder='Search' value={search} onChange={handleSearch} />
+      <h1>Phonebook</h1>
+      { 
+      visible && 
+          <Notification message={message} isError={isError} />
+      }
+      <Filter search={search} handleSearch={handleSearch}/>
       <br/>
-      <h3>Add New Contact </h3>
-      <form onSubmit={addPerson}>
-        <div>
-          <label htmlFor="name">Name: </label>
-          <input value={newPerson.name} name='name' onChange={handleOnChange}/>
-          </div>
-          <div>
-          <label htmlFor="number">Number: </label>
-          <input name='number' placeholder='000-000-000' onChange={handleOnChange} value={newPerson.number}/>
-          <button type="submit">add</button>
-        </div>
-      </form>
+      <PersonForm addPerson={addPerson} newPerson={newPerson} handleOnChange={handleOnChange}/>
       <h2>Numbers</h2>
-      <PhoneNumbers persons={filteredPersons}/>
+      <PhoneNumbers persons={filteredPersons} handleDelete={handleDelete}/>
     </div>
   )
 }
