@@ -3,9 +3,19 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "proxy": {
+    "/api": {
+      "target": "http://localhost:3001",
+      "secure": false,
+      "changeOrigin": true
+    }
+  },
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "start:dev": "VITE_APP_ENV=development vite --mode development",
+    "start:prod": "VITE_APP_ENV=production vite --mode production",
+    "build": "VITE_APP_ENV=production vite build",
+    "build:prod": "VITE_APP_ENV=production vite build",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "server": "json-server --watch ./db/db.json --port 3001"
