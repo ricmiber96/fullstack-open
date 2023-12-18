@@ -1,4 +1,6 @@
 db = db.getSiblingDB('PhonebookDB')
+db.getSiblingDB('BlogDB')
+db.createCollection('blogs')
 db.createCollection('contacts')
 
 db.contacts.insertMany([
