@@ -6,6 +6,8 @@ const mongoose = require('mongoose')
 const logger = require('./utils/logger')
 const middleware = require('./utils/middleware')
 const blogRouter = require('./controllers/blog.controller')
+const userRouter = require('./controllers/user.controller')
+const loginRouter = require('./controllers/login.controller')
 
 logger.info(`Connecting to ${config.MONGO_DB_URI}`)
 
@@ -25,7 +27,10 @@ process.on('uncaughtException', (err) => {
 app.use(cors())
 app.use(express.json())
 app.use(middleware.requestLogger)
+app.use(middleware.tokenExtractor)
+app.use('/api/login', loginRouter)
 app.use('/api/blogs', blogRouter)
+app.use('/api/users', userRouter)
 
 app.get('/', (request, response) => {
   response.send('<h1>Hello World!</h1>')
