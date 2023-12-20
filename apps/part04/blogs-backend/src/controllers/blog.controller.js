@@ -19,15 +19,15 @@ blogRouter.get('/', async (req, res) => {
   res.json(blogs)
 })
 // Get all blogs from expecified user
-blogRouter.get('/user', middleware.userExtractor, async (req, res) => {
-  try {
-    const userId = req.user.id
-    const blogs = await Blog.find({ user: userId }).populate('user', { username: 1, name: 1 })
-    res.json(blogs)
-  } catch (error) {
-    res.status(404).end()
-  }
-})
+// blogRouter.get('/user', middleware.userExtractor, async (req, res) => {
+//   try {
+//     const userId = req.user.id
+//     const blogs = await Blog.find({ user: userId }).populate('user', { username: 1, name: 1 })
+//     res.json(blogs)
+//   } catch (error) {
+//     res.status(404).end()
+//   }
+// })
 
 blogRouter.get('/:id', async (req, res) => {
   const id = req.params.id
@@ -82,7 +82,11 @@ blogRouter.put('/:id', async (req, res) => {
     url,
     likes
   }
+  const user = req.user
   try {
+    if (!user) {
+      return res.status(401).json({ error: 'invalid user' })
+    }
     const updatedBlog = await Blog.findByIdAndUpdate(id, updateBlog, { new: true })
     res.json(updatedBlog)
   } catch (error) {
@@ -97,7 +101,8 @@ blogRouter.delete('/:id', async (req, res) => {
     if (!user) {
       return res.status(401).json({ error: 'token missing or invalid' })
     }
-    const deletedBlog = await Blog.findByIdAndDelete(id)
+    const deletedBlog = await Blog.findById(id)
+    console.log(deletedBlog.user.toString(), user.id.toString())
     if (deletedBlog.user.toString() === user.id.toString()) {
       await Blog.findByIdAndDelete(id)
       res.status(204).end()
