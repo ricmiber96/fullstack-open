@@ -1,4 +1,5 @@
 const Blog = require('../models/blog.model')
+const User = require('../models/user.model')
 const initialBlogs = [
   {
     _id: '65803b6b19b46112101bfda2',
@@ -23,4 +24,16 @@ const resetDatabase = async () => {
   await Blog.insertMany(initialBlogs)
 }
 
-module.exports = { initialBlogs, resetDatabase }
+const usersInDb = async () => {
+  const users = await User.find({})
+  return users.map(u => u.toJSON())
+}
+
+const loginAnUser = async (api, user) => {
+  const response = await api
+    .post('/api/login')
+    .send(user)
+  return response.body.token
+}
+
+module.exports = { initialBlogs, loginAnUser, resetDatabase, usersInDb }

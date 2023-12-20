@@ -3,6 +3,7 @@ const User = require('../models/user.model')
 const config = require('../utils/config')
 const blogRouter = require('express').Router()
 const jwt = require('jsonwebtoken')
+const middleware = require('../utils/middleware')
 
 const getTokenFrom = req => {
   const authorization = req.get('authorization')
@@ -17,6 +18,16 @@ blogRouter.get('/', async (req, res) => {
   const blogs = await Blog.find({}).populate('user', { username: 1, name: 1 })
   res.json(blogs)
 })
+// Get all blogs from expecified user
+blogRouter.get('/user', middleware.userExtractor, async (req, res) => {
+  try {
+    const userId = req.user.id
+    const blogs = await Blog.find({ user: userId }).populate('user', { username: 1, name: 1 })
+    res.json(blogs)
+  } catch (error) {
+    res.status(404).end()
+  }
+})
 
 blogRouter.get('/:id', async (req, res) => {
   const id = req.params.id
@@ -30,16 +41,20 @@ blogRouter.get('/:id', async (req, res) => {
 
 blogRouter.post('/', async (req, res) => {
   // Extract the data from the request body
-  const { title, author, url, likes, userId } = req.body
+  const { title, author, url, likes } = req.body
   // Get the token from the request
   // const token = getTokenFrom(req)
   // Decode the token to get the user id
-  const decodedToken = jwt.verify(req.token, config.SECRET)
-  if (!decodedToken || !decodedToken.id) {
-    return res.status(401).json({ error: 'token missing or invalid' })
-  }
+  // const decodedToken = jwt.verify(req.token, config.SECRET)
+  // if (!decodedToken || !decodedToken.id) {
+  //   return res.status(401).json({ error: 'token missing or invalid' })
+  // }
   // Get the user from the database
-  const user = await User.findById(decodedToken.id)
+  const user = req.user
+
+  if (!user) {
+    return res.status(401).json({ error: 'invalid user' })
+  }
   if (!title || !url) {
     return res.status(400).json({
       error: 'title or url missing'
@@ -77,9 +92,18 @@ blogRouter.put('/:id', async (req, res) => {
 
 blogRouter.delete('/:id', async (req, res) => {
   const id = req.params.id
+  const user = req.user
   try {
-    await Blog.findByIdAndDelete(id)
-    res.status(204).end()
+    if (!user) {
+      return res.status(401).json({ error: 'token missing or invalid' })
+    }
+    const deletedBlog = await Blog.findByIdAndDelete(id)
+    if (deletedBlog.user.toString() === user.id.toString()) {
+      await Blog.findByIdAndDelete(id)
+      res.status(204).end()
+    } else {
+      return res.status(401).json({ error: 'invalid user' })
+    }
   } catch (error) {
     return res.status(404).end()
   }

@@ -5,30 +5,12 @@ const supertest = require('supertest')
 const app = require('../app')
 const Blog = require('../models/blog.model')
 const helper = require('../utils/test_helper')
+const User = require('../models/user.model')
+const bcrypt = require('bcrypt')
 
 const api = supertest(app)
-const initialBlogs = [
-    {
-        "_id": "65803b6b19b46112101bfda2",
-        "title": "My First Blog Post",
-        "author": "John Doe",
-        "url": "https://example.com/my-first-blog-post",
-        "likes": 10,
-        "__v": 0
-    },
-    {
-        "_id": "65803b8419b46112101bfda5",
-        "title": "My Second Blog Post",
-        "author": "John Doe",
-        "url": "https://example.com/my-first-blog-post",
-        "likes": 20,
-        "__v": 0
-    }
-] 
 
 beforeAll(async () => {
-    const url = config.MONGO_DB_URI
-    console.log(`Connecting to ${url}`)
     await mongoose.connect('mongodb://mongo/BlogDB')
     // await Blog.deleteMany({})
     // let blogObject = new Blog(initialBlogs[0])
@@ -58,7 +40,6 @@ describe('When there is initially some blogs saved', () => {
         expect(response.body[0].id).toBeDefined()
     })
 
-
 })
 
 describe('Viewing a specific blog', () => {
@@ -81,8 +62,145 @@ describe('Viewing a specific blog', () => {
 
 })
 
+describe('Add one user to the database', () => {
+    beforeEach(async () => {
+        await User.deleteMany({})
+        const passwordHash = await bcrypt.hash('secret', 10)
+        const user = new User({ username: 'root', passwordHash })
+        await user.save()
+    })
+
+    test('A valid user can be added', async () => {
+        const usersAtStart = await helper.usersInDb()
+        const newUser = {
+            username: 'johndoe',
+            name: 'John Doe',
+            password: 'secret'
+        }
+
+        await api
+            .post('/api/users')
+            .send(newUser)
+            .expect(201)
+            .expect('Content-Type', /application\/json/)
+        
+        const usersAtEnd = await helper.usersInDb()
+        expect(usersAtEnd).toHaveLength(usersAtStart.length + 1)
+        const usernames = usersAtEnd.map(u => u.username)
+        expect(usernames).toContain(newUser.username)
+    })
+
+    test('A user without a username or password is not added', async () => {
+        const usersAtStart = await helper.usersInDb()
+        const incompleteUsers = [
+            {
+                name: 'John Doe',
+            }
+        ]
+        await api
+            .post('/api/users')
+            .send(incompleteUsers[0])
+            .expect(400)
+        const usersAtEnd = await helper.usersInDb()
+        expect(usersAtEnd).toHaveLength(usersAtStart.length)
+    })
+
+    test('A user with a username or password less than 3 characters is not added', async () => {
+        const usersAtStart = await helper.usersInDb()
+        const incompleteUsers = [
+            {
+                username: 'jo',
+                name: 'John Doe',
+                password: 'secret'
+            },
+            {
+                username: 'johndoe',
+                name: 'John Doe',
+                password: 'se'
+            }
+        ]
+        await api
+            .post('/api/users')
+            .send(incompleteUsers[0])
+            .expect(400)
+        await api
+            .post('/api/users')
+            .send(incompleteUsers[1])
+            .expect(400)
+        const usersAtEnd = await helper.usersInDb()
+        expect(usersAtEnd).toHaveLength(usersAtStart.length)
+    })
+})
+
+describe('View blogs of a specific user', () => {
+
+    beforeEach(async () => {
+        const users = await api.get('/api/users')
+        const userToView = users.body[0]
+        const blogToPost = {
+            title: 'My First Blog Post',
+            autor: 'John Doe',
+            url: 'https://example.com/my-first-blog-post',
+            likes: 10,
+            user: {
+                username: userToView.username,
+                name: userToView.name,
+                id: userToView.id
+            }
+        }
+        await api
+            .post('/api/blogs')
+            .send(blogToPost)
+            .expect(201)
+            .expect('Content-Type', /application\/json/)
+    })
+
+
+    test('Get the blogs of the first user', async () => {
+        const users = await api.get('/api/users')
+        const userToView = users.body[0]
+        const resultBlogs = await api
+            .get(`/api/blogs/user`)
+            .expect(200)
+            .expect('Content-Type', /application\/json/)
+        expect(resultBlogs.body[0].user).toEqual(userToView.id)
+    })
+})
+
 
 describe('Addition of a new blog', () => {
+
+    test('A valid blog can be added', async () => {
+        const user = {
+            username: 'root',
+            password: 'secret'
+        }
+        const loginUser = await api
+            .post('/api/login')
+            .send(user)
+            .expect(200)
+            .expect('Content-Type', /application\/json/)
+
+        console.log(loginUser.body.token)
+        
+        const newBlog = {
+            title: 'My Third Blog Post',
+            author: 'John Doe',
+            url: 'https://example.com/my-third-blog-post',
+            likes: 30
+        }
+        await api
+            .post('/api/blogs')
+            .send(newBlog)
+            .set('Authorization', `bearer ${loginUser.body.token}`)
+            .expect(201)
+            .expect('Content-Type', /application\/json/)
+        
+        const response = await api.get('/api/blogs')
+        const content = response.body.map(r => r.title)
+        expect(response.body).toHaveLength(helper.initialBlogs.length + 1)
+        expect(content).toContain('My Third Blog Post')
+    })
 
         test('A blog without a title or url is not added', async () => {
             const incompleteBlogs = [
@@ -100,36 +218,19 @@ describe('Addition of a new blog', () => {
             await api
                 .post('/api/blogs')
                 .send(incompleteBlogs[0])
-                .expect(400)
+                .expect(401)
 
             await api
                 .post('/api/blogs')
                 .send(incompleteBlogs[1])
-                .expect(400)
+                .expect(401)
 
             const response = await api.get('/api/blogs')
-            expect(response.body).toHaveLength(initialBlogs.length)
+            expect(response.body).toHaveLength(helper.initialBlogs.length + 1)
         })
 
 
-        test('A valid blog can be added', async () => {
-            const newBlog = {
-                title: 'My Third Blog Post',
-                author: 'John Doe',
-                url: 'https://example.com/my-third-blog-post',
-                likes: 30
-            }
-            await api
-                .post('/api/blogs')
-                .send(newBlog)
-                .expect(201)
-                .expect('Content-Type', /application\/json/)
-            
-            const response = await api.get('/api/blogs')
-            const content = response.body.map(r => r.title)
-            expect(response.body).toHaveLength(initialBlogs.length + 1)
-            expect(content).toContain('My Third Blog Post')
-        })
+        
 
         test('A blog without a likes property will default to 0', async () => {
             const newBlog = {
@@ -163,7 +264,7 @@ describe('Updating a blog', () => {
             .send(updateBlog)
             .expect(200)
         const blogsAtEnd = await api.get('/api/blogs')
-        expect(blogsAtEnd.body).toHaveLength(initialBlogs.length)
+        expect(blogsAtEnd.body).toHaveLength(helper.initialBlogs.length)
         const arrayLikes = blogsAtEnd.body.map(r => r.likes)
         expect(arrayLikes).toContain(updateBlog.likes)
     })
@@ -180,7 +281,7 @@ describe('Deleting a blog', () => {
             .delete(`/api/blogs/${blogToDelete.id}`)
             .expect(204)
         const blogsAtEnd = await api.get('/api/blogs')
-        expect(blogsAtEnd.body).toHaveLength(initialBlogs.length - 1)
+        expect(blogsAtEnd.body).toHaveLength(helper.initialBlogs.length - 1)
         const contents = blogsAtEnd.body.map(r => r.title)
         expect(contents).not.toContain(blogToDelete.title)
   
