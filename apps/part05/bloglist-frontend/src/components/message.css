@@ -1,0 +1,17 @@
+.notification-visible {
+    display: block;
+  }
+  
+  .notification-hidden {
+    display: none;
+  }
+  
+  .success {
+    color: green;
+    border-color: green;
+  }
+  
+  .error {
+    color: red;
+    border-color: red;
+  }
