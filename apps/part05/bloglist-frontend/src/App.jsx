@@ -39,12 +39,12 @@ const App = () => {
             {formVisible ? 'cancel' : 'new blog'}
           </button>
           <BlogForm isVisible={formVisible} onChangeVisible={setFormVisible}/>
-           <h2>blogs</h2>
-           {blogs.map(blog =>
-             <Blog key={blog.id} blog={blog} />
-           )}
+          <h2>blogs</h2>
+          {blogs.sort((a, b) => b.likes - a.likes).map(blog =>
+            <Blog key={blog.id} blog={blog} />
+          )}
         </div>
-    }
+      }
     </>
   )
 }

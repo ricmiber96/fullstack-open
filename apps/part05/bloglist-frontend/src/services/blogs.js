@@ -15,4 +15,22 @@ const addBlog = async (blog, token) => {
   return response.data
 }
 
-export default { getAll, addBlog }
+const updateBlog = async (blog, token) => {
+  const baseUrl = import.meta.env.VITE_ENV === 'dev' ? `http://localhost:3003/api/blogs/${blog.id}` : `/api/blogs/${blog.id}`
+  const config = {
+    headers: { Authorization: `bearer ${token}` }
+  }
+  const response = await axios.put(baseUrl, blog, config)
+  return response.data
+}
+
+const deleteBlog = async (blog, token) => {
+  const baseUrl = import.meta.env.VITE_ENV === 'dev' ? `http://localhost:3003/api/blogs/${blog.id}` : `/api/blogs/${blog.id}`
+  const config = {
+    headers: { Authorization: `bearer ${token}` }
+  }
+  const response = await axios.delete(baseUrl, config)
+  return response.data
+}
+
+export default { getAll, addBlog, updateBlog, deleteBlog }
