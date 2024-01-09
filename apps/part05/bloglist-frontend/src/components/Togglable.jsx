@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-export default function Togglable ({ visible, setVisibility, buttonLabel }) {
+export default function Togglable ({ visible, setVisibility, buttonLabel, children}) {
   const hidenWhenVisible = { display: visible ? 'none' : '' }
   const showWhenVisible = { display: visible ? '' : 'none' }
 
@@ -22,7 +22,7 @@ export default function Togglable ({ visible, setVisibility, buttonLabel }) {
           {buttonLabel}
         </button>
       </div>
-      <div style={showWhenVisible}>
+      <div style={showWhenVisible} className='togglable-content'>
         <button onClick={toggleVisibility}>
             cancel
         </button>

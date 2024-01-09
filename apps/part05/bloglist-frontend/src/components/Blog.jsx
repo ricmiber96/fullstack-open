@@ -34,17 +34,21 @@ export default function Blog ({ blog }) {
       <div> {blog.title} | {blog.author}</div>
       <Togglable visible={viewMore} setVisibility={setViewMore} buttonLabel='view' />
       {/* <button onClick={() => setViewMore(!viewMore)}>{viewMore ? 'hide' : 'view'}</button> */}
+      <div>
       {viewMore
-        ? <div>
+        ? <div className='blog-content'>
           <div>{blog.url}</div>
-          <div>likes:  {blog.likes}
+          <div>
+            <p>likes: {blog.likes}</p>
             <button onClick={handleUpdateLikes}>like</button>
           </div>
           <div>{blog.user.name}</div>
           <button onClick={() => { handleDeleteBlog(blog) }}>remove</button>
         </div>
+        
         : null
       }
+      </div>
     </div>
   )
 }
