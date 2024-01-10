@@ -9,7 +9,8 @@
     "test": "jest",
     "test:cov": "jest --coverage ",
     "test:watch": "jest --watch",
-    "coverage": "vitest --coverage",
+    "test:e2e": "cypress run",
+    "cypress:open": "cypress open",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
@@ -32,6 +33,7 @@
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
     "@vitejs/plugin-react": "^4.0.3",
+    "cypress": "^13.6.2",
     "eslint": "^8.56.0",
     "eslint-config-standard": "^17.1.0",
     "eslint-plugin-import": "^2.29.1",

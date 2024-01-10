@@ -9,7 +9,19 @@ const blogRouter = require('./controllers/blog.controller')
 const userRouter = require('./controllers/user.controller')
 const loginRouter = require('./controllers/login.controller')
 
-logger.info(`Connecting to ${config.MONGO_DB_URI}`)
+// async function dbConnect () {
+//   try {
+//     await mongoose.connect(config.MONGO_DB_URI)
+//     logger.info(`Connecting to ${config.MONGO_DB_URI}`)
+//   } catch (err) {
+//     logger.error('Error connecting to MongoDB:', err.message)
+//   } finally {
+//     logger.info('Closing MongoDB connection')
+//     await mongoose.connection.close()
+//   }
+// }
+
+// dbConnect()
 
 mongoose.connect(config.MONGO_DB_URI)
   .then(() => {
@@ -19,10 +31,22 @@ mongoose.connect(config.MONGO_DB_URI)
     logger.error('Error connecting to MongoDB:', err.message)
   })
 
-process.on('uncaughtException', (err) => {
-  logger.error('Uncaught exception:', err.message)
-  mongoose.connection.close()
-})
+// mongoose.connect(config.MONGO_DB_URI)
+//   .then(() => {
+//     logger.info('Connected to MongoDB')
+//   })
+//   .catch((err) => {
+//     logger.error('Error connecting to MongoDB:', err.message)
+//   })
+//   .finally(() => {
+//     logger.info('Closing MongoDB connection')
+//     mongoose.connection.close()
+//   })
+
+// process.on('uncaughtException', (err) => {
+//   logger.error('Uncaught exception:', err.message)
+//   mongoose.connection.close()
+// })
 
 app.use(cors())
 app.use(express.json())
@@ -36,6 +60,12 @@ app.use('/api/users', userRouter)
 app.get('/', (request, response) => {
   response.send('<h1>Hello World!</h1>')
 })
+
+if (process.env.NODE_ENV === 'dev') {
+  const testingRouter = require('./controllers/testing.controller')
+  app.use('/api/testing', testingRouter)
+}
+
 app.use(middleware.unknownEndpoint)
 app.use(middleware.errorHandler)
 

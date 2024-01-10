@@ -9,8 +9,12 @@ userRouter.get('/', async (req, res) => {
 
 userRouter.post('/', async (req, res) => {
   const { username, name, password } = req.body
-
-  if (!username || !password) {
+  const userExist = await User.findOne({ username })
+  if (userExist) {
+    return res.status(400).json({
+      error: 'username already exists'
+    }).end()
+  } else if (!username || !password) {
     return res.status(400).json({
       error: 'username or password missing'
     }).end()
