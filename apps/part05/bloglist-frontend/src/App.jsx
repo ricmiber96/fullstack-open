@@ -3,24 +3,38 @@ import Blog from './components/Blog'
 import blogService from './services/blogs'
 import Login from './components/Login'
 import BlogForm from './components/BlogForm'
+import BlogList from './components/BlogList'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
   const [formVisible, setFormVisible] = useState(false)
 
-  useEffect(() => {
-    blogService.getAll().then(blogs =>
+  const getAllBlogs = async () => {
+    if (user === null) return
+    try {
+      const blogs = await blogService.getAll()
       setBlogs(blogs)
-    )
-  }, [])
+    }
+    catch (exception) {
+      console.log(exception)
+    }
+  }
 
-  useEffect(() => {
+  const getUserFromLocalStorage = async() => {
     const loggedUserJSON = window.localStorage.getItem('loggedUser')
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
       setUser(user)
     }
+  }
+
+  useEffect(() => {
+    getAllBlogs()
+  }, [user])
+
+  useEffect(() => {
+    getUserFromLocalStorage()
   }, [])
 
   const handleLogout = () => {
@@ -39,10 +53,7 @@ const App = () => {
             {formVisible ? 'cancel' : 'new blog'}
           </button>
           <BlogForm isVisible={formVisible} onChangeVisible={setFormVisible}/>
-          <h2>blogs</h2>
-          {blogs.sort((a, b) => b.likes - a.likes).map(blog =>
-            <Blog key={blog.id} blog={blog} />
-          )}
+          <BlogList blogs={blogs} />
         </div>
       }
     </>

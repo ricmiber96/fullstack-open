@@ -83,10 +83,16 @@ blogRouter.put('/:id', async (req, res) => {
     likes
   }
   const user = req.user
+  // try {
+  //   if (!user) {
+  //     return res.status(401).json({ error: 'invalid user' })
+  //   }
+  //   const updatedBlog = await Blog.findByIdAndUpdate(id, updateBlog, { new: true })
+  //   res.json(updatedBlog)
+  // } catch (error) {
+  //   res.status(404).end()
+  // }
   try {
-    if (!user) {
-      return res.status(401).json({ error: 'invalid user' })
-    }
     const updatedBlog = await Blog.findByIdAndUpdate(id, updateBlog, { new: true })
     res.json(updatedBlog)
   } catch (error) {

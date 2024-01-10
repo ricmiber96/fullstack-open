@@ -24,7 +24,7 @@ export default function Togglable ({ visible, setVisibility, buttonLabel, childr
       </div>
       <div style={showWhenVisible} className='togglable-content'>
         <button onClick={toggleVisibility}>
-            cancel
+            Cancel
         </button>
       </div>
     </div>

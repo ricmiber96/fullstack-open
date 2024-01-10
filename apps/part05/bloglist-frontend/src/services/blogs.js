@@ -1,13 +1,20 @@
 import axios from 'axios'
 
+const BASE_URL_DEV = 'http://localhost:3003'
+const BASE_URL_PROD = 'https://bloglist-backend-heroku.herokuapp.com'
+
+const getBaseUrl = () => {
+  return process.env.VITE_ENV === 'dev' ? BASE_URL_DEV : BASE_URL_PROD
+}
+
 const getAll = () => {
-  const baseUrl = import.meta.env.VITE_ENV === 'dev' ? 'http://localhost:3003/api/blogs' : '/api/blogs'
-  const request = axios.get(baseUrl)
+  const endpoint = '/api/blogs'
+  const request = axios.get(`${getBaseUrl()}${endpoint}`)
   return request.then(response => response.data)
 }
 
 const addBlog = async (blog, token) => {
-  const baseUrl = import.meta.env.VITE_ENV === 'dev' ? 'http://localhost:3003/api/blogs' : '/api/blogs'
+  const baseUrl = `${getBaseUrl()}/api/blogs`
   const config = {
     headers: { Authorization: `bearer ${token}` }
   }
@@ -15,17 +22,14 @@ const addBlog = async (blog, token) => {
   return response.data
 }
 
-const updateBlog = async (blog, token) => {
-  const baseUrl = import.meta.env.VITE_ENV === 'dev' ? `http://localhost:3003/api/blogs/${blog.id}` : `/api/blogs/${blog.id}`
-  const config = {
-    headers: { Authorization: `bearer ${token}` }
-  }
-  const response = await axios.put(baseUrl, blog, config)
+const updateBlog = async (blog) => {
+  const baseUrl = `${getBaseUrl()}/api/blogs/${blog.id}`
+  const response = await axios.put(baseUrl, blog)
   return response.data
 }
 
 const deleteBlog = async (blog, token) => {
-  const baseUrl = import.meta.env.VITE_ENV === 'dev' ? `http://localhost:3003/api/blogs/${blog.id}` : `/api/blogs/${blog.id}`
+  const baseUrl = `${getBaseUrl()}/api/blogs/${blog.id}`
   const config = {
     headers: { Authorization: `bearer ${token}` }
   }
