@@ -1,6 +1,13 @@
 import React, { useState } from 'react'
 import blogService from '../services/blogs'
 import Togglable from './Togglable'
+import PropTypes from 'prop-types'
+
+Blog.propTypes = {
+  blog: PropTypes.object.isRequired,
+  updateBlog: PropTypes.func.isRequired,
+  deleteBlog: PropTypes.func.isRequired
+}
 
 export default function Blog ({ blog, updateBlog, deleteBlog }) {
   const [viewMore, setViewMore] = useState(false)

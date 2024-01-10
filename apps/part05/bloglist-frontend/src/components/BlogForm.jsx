@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 import blogService from '../services/blogs'
-import Message from './Message'
+// import Message from './Message'
 
-export default function BlogForm ({ isVisible, onChangeVisible }) {
+export default function BlogForm ({ createBlog, isVisible, onChangeVisible }) {
   const [newBlog, setNewBlog] = useState({
     title: '',
     author: '',
@@ -17,16 +17,14 @@ export default function BlogForm ({ isVisible, onChangeVisible }) {
 
   const handleChange = (e) => {
     const { name, value } = e.target
-    console.log(name, value)
     setNewBlog({ ...newBlog, [name]: value })
-    console.log(newBlog)
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setUser(JSON.parse(window.localStorage.getItem('loggedUser')))
     try {
-      await blogService.addBlog(newBlog, user.token)
+      await createBlog(newBlog)
       setNotification({
         message: `A new blog ${newBlog.title} added`,
         isError: false,
@@ -55,26 +53,13 @@ export default function BlogForm ({ isVisible, onChangeVisible }) {
     return () => clearTimeout(timeout)
   }
 
-  //   useEffect(() => {
-  //     const timeout = setTimeout(() => {
-  //       setNotification({
-  //         ...notification,
-  //         isVisible: true
-  //       })
-  //     }, 5000)
 
-  //     setNotification({
-  //       ...notification,
-  //       isVisible: false
-  //     })
-  //     return () => clearTimeout(timeout)
-  //   }, [user])
 
   return (
     <div style={{ display: isVisible ? '' : 'none' }}>
       <h2>create new</h2>
       {
-      <Message message={notification.message} isError={notification.isError} isVisible={notification.isVisible}/>
+      // <Message message={notification.message} isError={notification.isError} isVisible={notification.isVisible}/>
       }
         <form onSubmit={handleSubmit}>
             <label> title: </label>
@@ -82,6 +67,7 @@ export default function BlogForm ({ isVisible, onChangeVisible }) {
                 type="text"
                 value={newBlog.title}
                 name="title"
+                id='title'
                 onChange={handleChange}
             />
             <br />
@@ -90,6 +76,7 @@ export default function BlogForm ({ isVisible, onChangeVisible }) {
                 type="text"
                 value={newBlog.author}
                 name="author"
+                id='author'
                 onChange={handleChange}
             />
             <br />
@@ -98,10 +85,11 @@ export default function BlogForm ({ isVisible, onChangeVisible }) {
                 type="text"
                 value={newBlog.url}
                 name="url"
+                id='url'
                 onChange={handleChange}
             />
             <br />
-            <button type="submit">create</button>
+            <button type="submit">Create</button>
             <button onClick={() => onChangeVisible(!isVisible)}>cancel</button>
             </form>
     </div>

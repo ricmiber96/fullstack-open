@@ -82,7 +82,7 @@ blogRouter.put('/:id', async (req, res) => {
     url,
     likes
   }
-  const user = req.user
+  // const user = req.user
   // try {
   //   if (!user) {
   //     return res.status(401).json({ error: 'invalid user' })

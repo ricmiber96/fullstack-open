@@ -21,8 +21,6 @@ export default function BlogList({blogs}) {
     const deleteBlog = async(blog) => {
         try {
             await blogService.deleteBlog(blog)
-            const blogs = await blogService.getAll()
-            setBlogs(blogs)
         }
         catch (exception) {
             console.log(exception)

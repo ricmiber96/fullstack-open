@@ -42,6 +42,16 @@ const App = () => {
     setUser(null)
   }
 
+  const addBlog = async (newBlog) => {
+    try {
+      await blogService.addBlog(newBlog, user.token)
+      setBlogs(blogs.concat(newBlog))
+    }
+    catch (exception) {
+      console.log(exception)
+    }
+  }
+
   return (
     <>
       {user === null
@@ -52,7 +62,7 @@ const App = () => {
           <button style={{ display: formVisible ? 'none' : '' }} onClick={() => setFormVisible(!formVisible)}>
             {formVisible ? 'cancel' : 'new blog'}
           </button>
-          <BlogForm isVisible={formVisible} onChangeVisible={setFormVisible}/>
+          <BlogForm createBlog={addBlog} isVisible={formVisible} onChangeVisible={setFormVisible}/>
           <BlogList blogs={blogs} />
         </div>
       }
