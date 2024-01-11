@@ -28,27 +28,33 @@ export default function Blog ({ blog, updateBlog, deleteBlog }) {
     updateBlog(newBlog)
   }
 
-  const handleDeleteBlog = (blog) => {
-    const userToken = JSON.parse(window.localStorage.getItem('loggedUser')).token
-    if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) {
-      deleteBlog(blog, userToken)
-    }
-  }
+  // const handleDeleteBlog = (blog) => {
+  //   const userToken = JSON.parse(window.localStorage.getItem('loggedUser')).token
+  //   if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) {
+  //     deleteBlog(blog, userToken)
+  //   }
+  // }
+
 
   return (
-    <div style={blogStyle} className='blog'>
-      <div className='blog-overview'> {blog.title} | {blog.author}</div>
+    <div style={blogStyle} className='blog-item'>
+      <div className='blog-overview'> {blog.title} | {blog.author}
       <Togglable visible={viewMore} setVisibility={setViewMore} buttonLabel='View more' />
+      </div>
       <div>
       {viewMore
         ? <div className='blog-content'>
           <div>Url {blog.url}</div>
           <div>
-            <p>likes: {blog.likes}</p>
+            <p className='blog-likes'>likes: {blog.likes}</p>
             <button onClick={handleUpdateLikes}>like</button>
           </div>
           <div>{blog.user.name}</div>
-          <button onClick={() => { handleDeleteBlog(blog) }}>remove</button>
+          {
+            blog.user.username === JSON.parse(window.localStorage.getItem('loggedUser')).username
+              ? <button onClick={() => { deleteBlog(blog) }}>remove</button>
+              : null
+          }
         </div>
         
         : null

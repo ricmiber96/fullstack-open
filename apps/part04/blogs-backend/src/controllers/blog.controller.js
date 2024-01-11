@@ -39,7 +39,7 @@ blogRouter.get('/:id', async (req, res) => {
   }
 })
 
-blogRouter.post('/', async (req, res) => {
+blogRouter.post('/', middleware.userExtractor, async (req, res) => {
   // Extract the data from the request body
   const { title, author, url, likes } = req.body
   // Get the token from the request
@@ -100,24 +100,23 @@ blogRouter.put('/:id', async (req, res) => {
   }
 })
 
-blogRouter.delete('/:id', async (req, res) => {
+blogRouter.delete('/:id', middleware.userExtractor, async (req, res) => {
   const id = req.params.id
   const user = req.user
-  try {
-    if (!user) {
-      return res.status(401).json({ error: 'token missing or invalid' })
-    }
-    const deletedBlog = await Blog.findById(id)
-    console.log(deletedBlog.user.toString(), user.id.toString())
-    if (deletedBlog.user.toString() === user.id.toString()) {
-      await Blog.findByIdAndDelete(id)
-      res.status(204).end()
-    } else {
-      return res.status(401).json({ error: 'invalid user' })
-    }
-  } catch (error) {
-    return res.status(404).end()
+  const blog = await Blog.findById(id)
+  console.log(blog)
+
+  if (!blog) {
+    console.log('blog not found')
+    return res.status(404).json({ error: 'blog not found' }).end()
   }
+  if (!blog.user || blog.user.toString() !== user.id.toString()) {
+    console.log('blog.user', blog.user)
+    return res.status(401).json({ error: 'Access denied. You are not the owner of this blog' })
+  }
+  await Blog.findByIdAndRemove(id)
+  console.log('blog deleted')
+  res.status(204).end()
 })
 
 module.exports = blogRouter

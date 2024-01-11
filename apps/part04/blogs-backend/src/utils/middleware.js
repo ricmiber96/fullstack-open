@@ -31,9 +31,9 @@ const errorHandler = (error, request, response, next) => {
 
 const tokenExtractor = (request, response, next) => {
   const authorization = request.get('authorization')
-  if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
+  if (authorization && authorization.startsWith('Bearer ')) {
     // The substring(7) method is used to remove the first 7 characters from the string, which in this case is 'bearer '.
-    request.token = authorization.substring(7)
+    request.token = authorization.replace('Bearer ', '')
   } else {
     request.token = null
   }
@@ -41,16 +41,12 @@ const tokenExtractor = (request, response, next) => {
 }
 
 const userExtractor = async (request, response, next) => {
-  if (!request.token) {
-    request.user = null
-  } else {
-    const decodedToken = jwt.verify(request.token, config.SECRET)
-    if (!decodedToken || !decodedToken.id) {
-      request.user = null
-    } else {
-      request.user = await User.findById(decodedToken.id)
-    }
+  const decodedToken = jwt.verify(request.token, config.SECRET)
+  if (!decodedToken || !decodedToken.id) {
+    return response.status(401).json({ error: 'token missing or invalid' })
   }
+  const user = await User.findById(decodedToken.id)
+  request.user = user
   next()
 }
 

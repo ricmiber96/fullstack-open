@@ -7,6 +7,15 @@ const getBaseUrl = () => {
   return process.env.VITE_ENV === 'dev' ? BASE_URL_DEV : BASE_URL_PROD
 }
 
+const getHeaders = (user) => {
+  console.log(user)
+  return {
+    headers: {
+      Authorization: `Bearer ${user.token}`
+    }
+  }
+}
+
 const getAll = () => {
   const endpoint = '/api/blogs'
   const request = axios.get(`${getBaseUrl()}${endpoint}`)
@@ -16,7 +25,7 @@ const getAll = () => {
 const addBlog = async (blog, token) => {
   const baseUrl = `${getBaseUrl()}/api/blogs`
   const config = {
-    headers: { Authorization: `bearer ${token}` }
+    headers: { Authorization: `Bearer ${token}` }
   }
   const response = await axios.post(baseUrl, blog, config)
   return response.data
@@ -28,12 +37,11 @@ const updateBlog = async (blog) => {
   return response.data
 }
 
-const deleteBlog = async (blog, token) => {
+const deleteBlog = async (blog, user) => {
   const baseUrl = `${getBaseUrl()}/api/blogs/${blog.id}`
-  const config = {
-    headers: { Authorization: `bearer ${token}` }
-  }
-  const response = await axios.delete(baseUrl, config)
+  const headers = getHeaders(user)
+  const response = await axios.delete(baseUrl, headers)
+  console.log(response)
   return response.data
 }
 

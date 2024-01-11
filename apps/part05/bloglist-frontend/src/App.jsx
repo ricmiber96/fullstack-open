@@ -6,9 +6,40 @@ import BlogForm from './components/BlogForm'
 import BlogList from './components/BlogList'
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
+  const [blogs, setBlogs] = useState([])
   const [formVisible, setFormVisible] = useState(false)
+
+  const getUserFromLocalStorage = async() => {
+    const loggedUserJSON = window.localStorage.getItem('loggedUser')
+    if (loggedUserJSON) {
+      const user = JSON.parse(loggedUserJSON)
+      setUser(user)
+    }
+  }
+
+  useEffect(() => {
+    getUserFromLocalStorage()
+  }, [])
+
+  const handleLogout = () => {
+    window.localStorage.removeItem('loggedUser')
+    setUser(null)
+  }
+
+  const sortedBlogs = (blogs) => {
+   setBlogs(blogs.sort((a, b) => b.likes - a.likes))
+}
+
+  const addBlog = async (newBlog) => {
+    try {
+      const createBlog = await blogService.addBlog(newBlog, user.token)
+      sortedBlogs(blogs.concat({...createBlog, user: user}))
+    }
+    catch (exception) {
+      console.log(exception)
+    }
+  }
 
   const getAllBlogs = async () => {
     if (user === null) return
@@ -20,37 +51,10 @@ const App = () => {
       console.log(exception)
     }
   }
-
-  const getUserFromLocalStorage = async() => {
-    const loggedUserJSON = window.localStorage.getItem('loggedUser')
-    if (loggedUserJSON) {
-      const user = JSON.parse(loggedUserJSON)
-      setUser(user)
-    }
-  }
-
+  
   useEffect(() => {
     getAllBlogs()
   }, [user])
-
-  useEffect(() => {
-    getUserFromLocalStorage()
-  }, [])
-
-  const handleLogout = () => {
-    window.localStorage.removeItem('loggedUser')
-    setUser(null)
-  }
-
-  const addBlog = async (newBlog) => {
-    try {
-      await blogService.addBlog(newBlog, user.token)
-      setBlogs(blogs.concat(newBlog))
-    }
-    catch (exception) {
-      console.log(exception)
-    }
-  }
 
   return (
     <>
@@ -63,7 +67,7 @@ const App = () => {
             {formVisible ? 'cancel' : 'new blog'}
           </button>
           <BlogForm createBlog={addBlog} isVisible={formVisible} onChangeVisible={setFormVisible}/>
-          <BlogList blogs={blogs} />
+          <BlogList blogs={blogs} user={user} sortedBlogs={sortedBlogs} />
         </div>
       }
     </>

@@ -1,17 +1,19 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types'
 import Blog from './Blog'
 import blogService from '../services/blogs'
 
 
 
-export default function BlogList({blogs}) {
+
+export default function BlogList({blogs, user, sortedBlogs}) {
+
 
     const updateBlog = async(blog) => {
         try {
             await blogService.updateBlog(blog)
             const blogs = await blogService.getAll()
-            setBlogs(blogs)
+            sortedBlogs(blogs)
         }
         catch (exception) {
             console.log(exception)
@@ -19,12 +21,17 @@ export default function BlogList({blogs}) {
     }
 
     const deleteBlog = async(blog) => {
-        try {
-            await blogService.deleteBlog(blog)
-        }
-        catch (exception) {
-            console.log(exception)
-        }
+        if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) {
+            try {
+                await blogService.deleteBlog(blog, user)
+                const newBlogs = blogs.filter(b => b.id !== blog.id)
+                sortedBlogs(newBlogs)
+            }
+            catch (exception) {
+                console.log(exception)
+            }
+        
+        } 
     }
 
   return (
@@ -40,5 +47,7 @@ export default function BlogList({blogs}) {
 }
 
 BlogList.propTypes = {
-    blogs: PropTypes.array.isRequired
+    blogs: PropTypes.array.isRequired,
+    user: PropTypes.object.isRequired,
+    sortedBlogs: PropTypes.func.isRequired
 }

@@ -51,15 +51,11 @@ mongoose.connect(config.MONGO_DB_URI)
 app.use(cors())
 app.use(express.json())
 app.use(middleware.requestLogger)
+app.use(middleware.errorHandler)
 app.use(middleware.tokenExtractor)
-app.use(middleware.userExtractor)
 app.use('/api/login', loginRouter)
 app.use('/api/blogs', blogRouter)
 app.use('/api/users', userRouter)
-
-app.get('/', (request, response) => {
-  response.send('<h1>Hello World!</h1>')
-})
 
 if (process.env.NODE_ENV === 'dev') {
   const testingRouter = require('./controllers/testing.controller')
@@ -67,6 +63,5 @@ if (process.env.NODE_ENV === 'dev') {
 }
 
 app.use(middleware.unknownEndpoint)
-app.use(middleware.errorHandler)
 
 module.exports = app
