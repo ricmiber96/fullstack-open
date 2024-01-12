@@ -100,21 +100,25 @@ blogRouter.put('/:id', async (req, res) => {
   }
 })
 
-blogRouter.delete('/:id', middleware.userExtractor, async (req, res) => {
+blogRouter.delete('/:id', middleware.authenticateToken, async (req, res) => {
   const id = req.params.id
-  const user = req.user
+  const userId = req.userId
+
+  console.log('userId:', userId)
+
   const blog = await Blog.findById(id)
   console.log(blog)
+  console.log('blog.user:', blog.user.toString())
 
   if (!blog) {
     console.log('blog not found')
     return res.status(404).json({ error: 'blog not found' }).end()
   }
-  if (!blog.user || blog.user.toString() !== user.id.toString()) {
+  if (!blog.user || blog.user.toString() !== userId) {
     console.log('blog.user', blog.user)
-    return res.status(401).json({ error: 'Access denied. You are not the owner of this blog' })
+    return res.status(401).json({ error: 'Access denied. You are not the owner of this blog' }).end()
   }
-  await Blog.findByIdAndRemove(id)
+  await Blog.findByIdAndDelete(id)
   console.log('blog deleted')
   res.status(204).end()
 })

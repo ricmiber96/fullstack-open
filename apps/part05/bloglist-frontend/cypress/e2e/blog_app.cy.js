@@ -117,11 +117,80 @@ describe('Blog App E2e test', function() {
 
       cy.get('.blog-list')
       .children('.blog-item')
-      .should('have.length', 1)
+      .should('have.length', 0)
 
     })
-    
+
+    it('Delete button is not shown if the blog was not created by the user', function() {
+      cy.createNewBlog({
+        title: 'A blog created by another user',
+        author: 'Test User',
+        url: 'https://www.cypress.io/'
+      })
+
+      cy.get('.blog-list')
+      .children('.blog-item').as('blogs')
+      .should('have.length', 2)
+
+      cy.get('@blogs')
+      .first()
+      .get('.blog-overview')
+      .get('button')
+      .contains('View more')
+      .click()
+
+      cy.get('.blog-content')
+      .contains('remove')
+
+      cy.contains('logout')
+      .click()
+
+      const user = {
+        name: 'Another User',
+        username: 'anotheruser',
+        password: 'secret123'
+      }
+
+      cy.request('POST', `${Cypress.env('BACKEND')}/users`, user)
+      cy.login({ username: 'anotheruser', password: 'secret123' })
+
+      cy.get('@blogs')
+      .first()
+      .get('.blog-overview')
+      .get('button')
+      .contains('View more')
+      .click()
+
+    cy.get('.blog-content')
+      .get('remove')
+      .should('not.exist')
+
+    })
+
+    it('Blogs are ordered according to likes', function() {
+
+      cy.createNewBlog({ title: 'Blog 2', author: 'Author 2', url: 'http://author2.blog', likes: 30 })
+      cy.createNewBlog({ title: 'Blog 3', author: 'Author 3', url: 'http://author3.blog', likes: 10 })
+      cy.get('.blog-list')
+      cy.get('.blog-item').as('blogs')
+
+  
+      cy.get('@blogs')
+      .should('have.length', 3)
+  
+      cy.get('@blogs')
+      .eq(0)
+      .contains('Blog 2 | Author 2')
+  
+      cy.get('@blogs')
+      .eq(1)
+      .contains('Blog 3 | Author 3')
+  
+    })
 
   })
+
+ 
+
 
 })

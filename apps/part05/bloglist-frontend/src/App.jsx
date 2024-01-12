@@ -33,8 +33,12 @@ const App = () => {
 
   const addBlog = async (newBlog) => {
     try {
-      const createBlog = await blogService.addBlog(newBlog, user.token)
-      sortedBlogs(blogs.concat({...createBlog, user: user}))
+      await blogService.addBlog(newBlog, user.token)
+      getAllBlogs()
+    
+      // await blogService.addBlog(newBlog, user.token)
+      // const blogs = await blogService.getAll()
+      // sortedBlogs(blogs)
     }
     catch (exception) {
       console.log(exception)
@@ -45,7 +49,8 @@ const App = () => {
     if (user === null) return
     try {
       const blogs = await blogService.getAll()
-      setBlogs(blogs)
+      const sortedBlogs = blogs.sort((a, b) => b.likes - a.likes)
+      setBlogs(sortedBlogs)
     }
     catch (exception) {
       console.log(exception)
