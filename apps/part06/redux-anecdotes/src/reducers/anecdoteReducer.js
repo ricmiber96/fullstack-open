@@ -1,3 +1,5 @@
+import { createSlice } from "@reduxjs/toolkit";
+
 const anecdotesAtStart = {
   
     anecdotes: [
@@ -45,62 +47,103 @@ console.log(transformedAnecdotes);
 //   }
 // })
 
+
+
+
+// export const createAnecdote = (content) => {
+//   return {
+//     type: 'NEW_ANECDOTE',
+//     payload: {
+//       content,
+//       id: getId(),
+//       votes: 0
+//     }
+//   }
+// }
+
+// export const addVote = (id) => {
+//   return {
+//     type: 'VOTE',
+//     payload: { id }
+//   }
+// }
+
+// export const toogleImportance = (id) => {
+//   return {
+//     type: 'TOGGLE_IMPORTANCE',
+//     payload: { id }
+//   }
+// }
+
 const initialState = transformedAnecdotes
 
-
-export const createAnecdote = (content) => {
-  return {
-    type: 'NEW_ANECDOTE',
-    payload: {
-      content,
-      id: getId(),
-      votes: 0
-    }
-  }
-}
-
-export const addVote = (id) => {
-  return {
-    type: 'VOTE',
-    payload: { id }
-  }
-}
-
-export const toogleImportance = (id) => {
-  return {
-    type: 'TOGGLE_IMPORTANCE',
-    payload: { id }
-  }
-}
-
-const anecdoteReducer = (state = initialState, action) => {
-  console.log('state now: ', state)
-  console.log('action', action)
-  const {type, payload} = action
-
-  switch (type) {
-    case 'NEW_ANECDOTE':
-      return [...state, payload]
-
-    case 'VOTE':{
-      const id = payload.id
-      const anecdoteToChange = state.find(a => a.id === id)
-      const changedAnecdote = {...anecdoteToChange, votes: anecdoteToChange.votes + 1}
-      const newState = state.map(a => a.id === id ? changedAnecdote : a).sort((a, b) => b.votes - a.votes)
-      return newState
-    }
-    case 'TOGGLE_IMPORTANCE':{
-      const id = payload.id
-      const anecdoteToChange = state.find(a => a.id === id)
+const anecdoteSlice = createSlice({
+  name: 'anecdotes',
+  initialState,
+  reducers: {
+    createAnecdote: (state, action) => {
+      const content = action.payload
+      const newAnecdote = { 
+        content,
+        id: getId(),
+        votes: 0,
+        important: Math.random() > 0.5 ? true : false
+      }
+      state.anecdotes.push(newAnecdote)
+    },
+    addVote: (state, action) => {
+      console.log(state.anecdotes)
+      const id = action.payload
+      console.log('ID', action.payload)
+      const anecdoteToChange = state.anecdotes.find(a => a.id === id)
       console.log(anecdoteToChange)
+      const changedAnecdote = {...anecdoteToChange, votes: anecdoteToChange.votes + 1}
+      const newState = state.anecdotes.map(a => a.id === id ? changedAnecdote : a).sort((a, b) => b.votes - a.votes)
+      console.log('newState', newState)
+      return {...state, anecdotes: newState}
+    },
+    toogleImportance: (state, action) => {
+      const id = action.payload
+      const anecdoteToChange = state.anecdotes.find(a => a.id === id)
       const changedAnecdote = {...anecdoteToChange, important: !anecdoteToChange.important}
-      const newState = state.map(a => a.id === id ? changedAnecdote : a).sort((a, b) => b.votes - a.votes)
-      return newState
+      const newState = state.anecdotes.map(a => a.id === id ? changedAnecdote : a).sort((a, b) => b.votes - a.votes)
+      return {...state, anecdotes: newState}
     }
-    default:
-      return state
   }
+})
 
-}
+export const {createAnecdote, addVote, toogleImportance} = anecdoteSlice.actions
+export default anecdoteSlice.reducer
 
-export default anecdoteReducer
+
+// const anecdoteReducer = (state = initialState, action) => {
+//   console.log('state now: ', state)
+//   console.log('action', action)
+//   const {type, payload} = action
+
+//   switch (type) {
+//     case 'NEW_ANECDOTE':
+//       return [...state, payload]
+
+//     case 'VOTE':{
+//       const id = payload.id
+//       const anecdoteToChange = state.find(a => a.id === id)
+//       const changedAnecdote = {...anecdoteToChange, votes: anecdoteToChange.votes + 1}
+//       const newState = state.map(a => a.id === id ? changedAnecdote : a).sort((a, b) => b.votes - a.votes)
+//       return newState
+//     }
+//     case 'TOGGLE_IMPORTANCE':{
+//       const id = payload.id
+//       const anecdoteToChange = state.find(a => a.id === id)
+//       console.log(anecdoteToChange)
+//       const changedAnecdote = {...anecdoteToChange, important: !anecdoteToChange.important}
+//       const newState = state.map(a => a.id === id ? changedAnecdote : a).sort((a, b) => b.votes - a.votes)
+//       return newState
+//     }
+//     default:
+//       return state
+//   }
+
+// }
+
+// export default anecdoteReducer

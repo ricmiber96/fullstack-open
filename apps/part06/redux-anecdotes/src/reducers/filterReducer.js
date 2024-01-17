@@ -25,6 +25,7 @@ const filterSlice = createSlice({
     initialState,
     reducers: {
         filterChange: (state, action) => {
+            console.log(state.typeByFilter)
             state.typeByFilter = action.payload
         },
         searchChange: (state, action) => {
