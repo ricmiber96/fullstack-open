@@ -1,6 +1,6 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
-import { createAnecdote } from '../reducers/anecdoteReducer';
+import { createAnecdote, createNewAnecdote } from '../reducers/anecdoteReducer';
 import { setTimedNotification } from '../reducers/notificationReducer';
 import anecdoteService from '../services/anecdotes';
 
@@ -12,15 +12,13 @@ export default function AnecdoteForm() {
         ev.preventDefault()
         const content = ev.target.anecdote.value
         ev.target.anecdote.value = ''
-        const newNote = await anecdoteService.createNew(content)
-        console.log(newNote)
-        dispatch(createAnecdote(newNote))
+        dispatch(createNewAnecdote(content))
         dispatch(setTimedNotification(`Created new anecdote: '${content}'`, 5))
     }
 
   return (
     <>
-    <h2>create new</h2>
+    <h2>Create New Anecdote</h2>
       <form onSubmit={addAnecdote}>
         <div><input name='anecdote' /></div>
         <button type='submit'>create</button>

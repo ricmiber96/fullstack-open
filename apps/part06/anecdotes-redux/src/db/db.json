@@ -33,18 +33,42 @@
     {
       "id": "4396",
       "content": "Nueva nota",
-      "votes": 0,
+      "votes": 1,
       "important": false
     },
     {
       "id": "a5a2",
       "content": "Nueva nota",
-      "votes": 0,
+      "votes": 1,
       "important": false
     },
     {
       "id": "1b33",
       "content": "Debugging",
+      "votes": 2,
+      "important": false
+    },
+    {
+      "id": "3dfb",
+      "content": "Hello world",
+      "votes": 3,
+      "important": true
+    },
+    {
+      "id": "02ba",
+      "content": "Hola",
+      "votes": 1,
+      "important": false
+    },
+    {
+      "id": "d95c",
+      "content": "Debugging",
+      "votes": 7,
+      "important": true
+    },
+    {
+      "id": "3a4b",
+      "content": "Hello world",
       "votes": 0,
       "important": false
     }

@@ -1,7 +1,8 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { addVote, toogleImportance } from '../reducers/anecdoteReducer';
+import { addVote, toggleImportanceOf, toogleImportance, voteAnecdote } from '../reducers/anecdoteReducer';
 import { setTimedNotification } from '../reducers/notificationReducer';
+import AnecdoteItem from './AnecdoteItem';
 
 export default function AnecdoteList() {
     // const anecdotes = useSelector(({filters, anecdotes}) => {
@@ -64,30 +65,33 @@ export default function AnecdoteList() {
 
     const handleVote = (id) => {
       console.log('vote', id)
-        dispatch(addVote(id))
         dispatch(setTimedNotification(`You voted '${anecdotes.find(anecdote => anecdote.id === id).content}'`, 5))
+        dispatch(voteAnecdote(id))
     }
     const handleImportance = (id) => {
-        dispatch(toogleImportance(id))
+      dispatch(toggleImportanceOf(id))
     }
+
+
 
   return (
    <div>
     <h2>Anecdotes</h2>
     {
        anecdotes &&
-    filteredAnecdotes.map(anecdote =>
-        <div key={anecdote.id}>
-          <div onClick={()=>{handleImportance(anecdote.id)}}>
-            {anecdote.content}
-          
-          <strong style={{color:'red'}} >{anecdote.important ? 'important' : ''}</strong>
-          </div>
-          <div>
-            has {anecdote.votes}
-            <button onClick={() => handleVote(anecdote.id)}>vote</button>
-          </div>
-        </div>
+        filteredAnecdotes.map(anecdote =>
+            // <div key={anecdote.id}>
+            // <div onClick={()=>{handleImportance(anecdote.id)}}>
+            //     {anecdote.content}
+            
+            // <strong style={{color:'red'}} >{anecdote.important ? 'important' : 'non-important'}</strong>
+            // </div>
+            // <div>
+            //     has {anecdote.votes}
+            //     <button onClick={() => handleVote(anecdote.id)}>vote</button>
+            // </div>
+            // </div>
+            <AnecdoteItem key={anecdote.id} anecdote={anecdote} />
       )}
    </div>
   );
