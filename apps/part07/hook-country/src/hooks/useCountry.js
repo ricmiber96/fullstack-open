@@ -24,7 +24,6 @@ export const useCountry = (name) => {
             )
             setLoading(false)
         } catch (error) {
-            setCountry({found: false})
             setError(error)
             setLoading(false)
         }finally {
