@@ -7,15 +7,14 @@ import AnecdoteList from './components/AnecdoteList'
 import AnecdoteForm from './components/AnecdoteForm'
 import Notification from './components/Notification'
 
-function App() {
-
+function App () {
   const dispatch = useDispatch()
 
   useEffect(() => {
-  console.log('Hello world')
-  console.info('Esto es un mensaje de info')
-  // anecdoteService.getAll().then(anecdotes => dispatch(setAnecdotes(anecdotes)))
-  dispatch(initializeAnecdotes())
+    console.log('Hello world')
+    console.info('Esto es un mensaje de info')
+    // anecdoteService.getAll().then(anecdotes => dispatch(setAnecdotes(anecdotes)))
+    dispatch(initializeAnecdotes())
   }
   , [dispatch])
 

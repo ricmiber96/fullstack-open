@@ -16,7 +16,7 @@ const getHeaders = (user) => {
   }
 }
 
-const getAll = () => {
+const getAllBlogs = () => {
   const endpoint = '/api/blogs'
   const request = axios.get(`${getBaseUrl()}${endpoint}`)
   return request.then(response => response.data)
@@ -45,4 +45,4 @@ const deleteBlog = async (blog, user) => {
   return response.data
 }
 
-export default { getAll, addBlog, updateBlog, deleteBlog }
+export default { getAllBlogs, addBlog, updateBlog, deleteBlog }

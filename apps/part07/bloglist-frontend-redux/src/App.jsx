@@ -8,27 +8,27 @@ import { Navigate, Route, Routes } from 'react-router-dom'
 import SignUp from './pages/SignUp'
 import Blogs from './pages/Blogs'
 import { useDispatch, useSelector } from 'react-redux'
-import { login } from './reducers/authSlice'
+import { getUserFromLocalStorage, login, loginUser } from './reducers/authSlice'
+import { initializeBlogs } from './reducers/blogSlice'
+import NavBar from './components/NavBar'
+import Footer from './components/Footer'
+import Layout from './components/Layout'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
+  const [user, setUser] = useState(null)
   const [formVisible, setFormVisible] = useState(false)
   const dispatch = useDispatch()
-  const user = useSelector((state) => state.auth.user)
 
  
-
-  const getUserFromLocalStorage = () => {
-    const loggedUserJSON = window.localStorage.getItem('loggedUser')
-    if (loggedUserJSON) {
-      const userParser = JSON.parse(loggedUserJSON)
-      // dispatch(login(userParser))
-    }
-  }
+ 
 
   useEffect(() => {
-    getUserFromLocalStorage()
+    console.log('Hello world')
+    dispatch(getUserFromLocalStorage())
   }, [])
+
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
 
 
   const sortedBlogs = (blogs) => {
@@ -60,21 +60,37 @@ const App = () => {
       console.log(exception)
     }
   }
-  
+
+ 
   useEffect(() => {
-    getAllBlogs()
+    dispatch(initializeBlogs())
+    // getAllBlogs()
   }, [user])
 
-  console.log(user);
+  console.log(isAuthenticated);
 
   return (
-    <>
+    <div className='bg-background dark:bg-background'>
       <Routes>
-        <Route path="/" element={ user ? <Blogs />  : <Navigate to="/login" /> } />
-        <Route path="/login" element={<Login /> } />
-        <Route path="/signup" element={<SignUp />} />
+        {
+          isAuthenticated  ? (<>
+          <Route path="/" element={<Layout/>}>
+            <Route index element={<Blogs />} />
+            {/* <Route path='/about' element={<About />} />
+            <Route path='/contact' element={<Contact />} /> */}
+          </Route>
+          <Route path='/login' element={<Navigate to='/' />} />
+          </>
+          ) : (
+            <>
+              <Route path='/login' element={<Login />} />
+              <Route path='/signup' element={<SignUp />} />
+              <Route path='*' element={<Navigate to='/login' />} />
+            </>
+          )  
+        }
       </Routes>
-    </>
+    </div>
   )
 }
 

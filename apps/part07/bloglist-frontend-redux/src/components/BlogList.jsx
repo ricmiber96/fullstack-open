@@ -37,7 +37,7 @@ export default function BlogList({blogs, user, sortedBlogs}) {
   return (
     <div>
       <h2>Blogs</h2>
-        <div className="blog-list">
+        <div className="flex flex-row gap-4 mt-6">
             {blogs.length === 0 && <p>No blogs to show</p>}
             {blogs.map(blog =>
                 <Blog key={blog.id} blog={blog} updateBlog={updateBlog} deleteBlog={deleteBlog} />

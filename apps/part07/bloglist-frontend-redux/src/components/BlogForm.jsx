@@ -1,8 +1,11 @@
 import { useEffect, useState } from 'react'
 import blogService from '../services/blogs'
+import { useSelector } from 'react-redux'
 // import Message from './Message'
 
 export default function BlogForm ({ createBlog, isVisible, onChangeVisible }) {
+  const user = useSelector((state) => state.auth.user)
+  console.log(user)
   const [newBlog, setNewBlog] = useState({
     title: '',
     author: '',
@@ -13,7 +16,7 @@ export default function BlogForm ({ createBlog, isVisible, onChangeVisible }) {
     isError: false,
     isVisible: false
   })
-  const [user, setUser] = useState(null)
+  // const [user, setUser] = useState(null)
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -22,7 +25,7 @@ export default function BlogForm ({ createBlog, isVisible, onChangeVisible }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    setUser(JSON.parse(window.localStorage.getItem('loggedUser')))
+    // setUser(JSON.parse(window.localStorage.getItem('loggedUser')))
     try {
       await createBlog(newBlog)
       setNotification({

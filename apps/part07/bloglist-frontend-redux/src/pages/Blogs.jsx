@@ -14,10 +14,7 @@ export default function Blogs(props) {
     const navigate = useNavigate()
     console.log(user);
 
-    const handleLogout = () => {
-        window.localStorage.removeItem('loggedUser')
-        dispatch(logout())
-    }
+
     const [blogs, setBlogs] = useState([])
   
     const sortedBlogs = (blogs) => {
@@ -41,7 +38,7 @@ export default function Blogs(props) {
     const getAllBlogs = async () => {
       if (user === null) return
       try {
-        const blogs = await blogService.getAll()
+        const blogs = await blogService.getAllBlogs()
         const sortedBlogs = blogs.sort((a, b) => b.likes - a.likes)
         setBlogs(sortedBlogs)
       }
@@ -57,7 +54,6 @@ export default function Blogs(props) {
   return (
     <div>
           <p>{user.name} logged-in</p>
-          <button onClick={handleLogout}>logout</button>
           <button style={{ display: formVisible ? 'none' : '' }} onClick={() => setFormVisible(!formVisible)}>
             {formVisible ? 'cancel' : 'new blog'}
           </button>

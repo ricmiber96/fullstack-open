@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import signupService from '../services/signup';
+import authService from '../services/auth';
 import Message from './Message';
 
 export default function SignUpForm(props) {
@@ -37,7 +37,7 @@ export default function SignUpForm(props) {
             password
         };
         try {
-            await signupService.signup(user);
+            await authService.signup(user);
             resetState();
             setMessage('User created successfully');
             setIsError(false);
