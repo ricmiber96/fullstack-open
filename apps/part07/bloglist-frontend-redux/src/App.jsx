@@ -20,31 +20,26 @@ const App = () => {
   const [formVisible, setFormVisible] = useState(false)
   const dispatch = useDispatch()
 
- 
- 
-
   useEffect(() => {
     console.log('Hello world')
     dispatch(getUserFromLocalStorage())
   }, [])
 
-  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
-
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated)
 
   const sortedBlogs = (blogs) => {
-   setBlogs(blogs.sort((a, b) => b.likes - a.likes))
-}
+    setBlogs(blogs.sort((a, b) => b.likes - a.likes))
+  }
 
   const addBlog = async (newBlog) => {
     try {
       await blogService.addBlog(newBlog, user.token)
       getAllBlogs()
-    
+
       // await blogService.addBlog(newBlog, user.token)
       // const blogs = await blogService.getAll()
       // sortedBlogs(blogs)
-    }
-    catch (exception) {
+    } catch (exception) {
       console.log(exception)
     }
   }
@@ -55,39 +50,40 @@ const App = () => {
       const blogs = await blogService.getAll()
       const sortedBlogs = blogs.sort((a, b) => b.likes - a.likes)
       setBlogs(sortedBlogs)
-    }
-    catch (exception) {
+    } catch (exception) {
       console.log(exception)
     }
   }
 
- 
-  useEffect(() => {
-    dispatch(initializeBlogs())
-    // getAllBlogs()
-  }, [user])
+  // useEffect(() => {
+  //   dispatch(initializeBlogs())
+  //   // getAllBlogs()
+  // }, [user])
 
-  console.log(isAuthenticated);
+  console.log(isAuthenticated)
 
   return (
     <div className='bg-background dark:bg-background'>
       <Routes>
         {
-          isAuthenticated  ? (<>
-          <Route path="/" element={<Layout/>}>
-            <Route index element={<Blogs />} />
-            {/* <Route path='/about' element={<About />} />
-            <Route path='/contact' element={<Contact />} /> */}
-          </Route>
-          <Route path='/login' element={<Navigate to='/' />} />
-          </>
-          ) : (
+          isAuthenticated
+            ? (
+            <>
+            <Route path="/" element={<Layout/>}>
+              <Route index element={<Blogs />} />
+              {/* <Route path='/about' element={<About />} />
+              <Route path='/contact' element={<Contact />} /> */}
+            </Route>
+            <Route path='/login' element={<Navigate to='/' />} />
+            </>
+              )
+            : (
             <>
               <Route path='/login' element={<Login />} />
               <Route path='/signup' element={<SignUp />} />
               <Route path='*' element={<Navigate to='/login' />} />
             </>
-          )  
+              )
         }
       </Routes>
     </div>

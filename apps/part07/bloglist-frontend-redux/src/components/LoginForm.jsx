@@ -29,7 +29,6 @@ export default function LoginForm ({ onUserChange }) {
       setUsername('')
       setPassword('')
       navigate('/')
-
     } catch (exception) {
       console.log(exception)
       setMessage('Wrong credentials')
@@ -81,17 +80,17 @@ export default function LoginForm ({ onUserChange }) {
     //   <Link to='/signup'>You don't have an account? Sign up here!</Link>
     // </div>
     // </div>
-    <div class="bg-gray-800 flex justify-center items-center h-screen">
-      <div class="w-1/2 h-screen hidden lg:block">
-        <img src={IMAGES.imageLogin} alt="Placeholder Image" class="object-cover w-full h-full"/>
+    <div className="bg-gray-800 flex justify-center items-center h-screen">
+      <div className="w-1/2 h-screen hidden lg:block">
+        <img src={IMAGES.imageLogin} alt="Placeholder Image" className="object-cover w-full h-full"/>
       </div>
-      <div class="lg:p-36 md:p-52 sm:20 p-8 w-full lg:w-1/2">
-        <h2 class="text-4xl font-bold mb-4">Blog App</h2>
+      <div className="lg:p-36 md:p-52 sm:20 p-8 w-full lg:w-1/2">
+        <h2 className="text-4xl font-bold mb-4">Blog App</h2>
         <form onSubmit={handleLogin} className='space-y-4'>
         <div>
-            <label for="username" class="block text-gray-200">Username</label>
+            <label htmlFor="username" className="block text-gray-200">Username</label>
             <input
-            class="w-full border text-black border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:border-blue-500"
+            className="w-full border text-black border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:border-blue-500"
             type="text"
             value={username}
             id='username'
@@ -100,9 +99,9 @@ export default function LoginForm ({ onUserChange }) {
             />
         </div>
         <div>
-            <label for="password" class="block text-gray-200">Password</label>
+            <label htmlFor="password" className="block text-gray-200">Password</label>
             <input
-            class="w-full border text-black border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:border-blue-500"
+            className="w-full border text-black border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:border-blue-500"
             type="password"
             value={password}
             id='password'
@@ -114,7 +113,7 @@ export default function LoginForm ({ onUserChange }) {
         <div>
           <Link to='/signup' className='text-green-500 hover:underline'>You don't have an account? Sign up here!</Link>
         </div>
-    </form>    
+    </form>
       </div>
     </div>
 
