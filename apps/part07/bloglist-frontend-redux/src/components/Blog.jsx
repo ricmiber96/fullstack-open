@@ -54,15 +54,13 @@ export default function Blog ({ blog, updateBlog, deleteBlog }) {
         <CardTitle>
           <div className='flex flex-row space-x-4'>
           <h3 className='text-3xl'>{blog.title}</h3>
-          <Button>
-            {viewMore ? <ChevronUp size={20} />  : <ChevronDown size={20} />}    
-          </Button>
+
+          <Togglable visible={viewMore} setVisibility={setViewMore} buttonLabel='View more' />
           </div>
         </CardTitle>
         <CardDescription className="text-md">Author: {blog.author}</CardDescription>
       </CardHeader>
       <CardContent>
-      <Togglable visible={viewMore} setVisibility={setViewMore} buttonLabel='View more' />
       <div>
       {viewMore
         ? <div className='blog-content'>
