@@ -1,9 +1,10 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import Togglable from './Togglable'
+import { Link } from 'react-router-dom'
 
 // ICONS
-import { Link, ThumbsUp, User } from 'lucide-react'
+import { ThumbsUp, User } from 'lucide-react'
 
 import {
   Card,
@@ -14,13 +15,13 @@ import {
 } from '@/components/ui/card'
 import { Button } from './ui/button'
 
-Blog.propTypes = {
+BlogCard.propTypes = {
   blog: PropTypes.object.isRequired,
   updateBlog: PropTypes.func.isRequired,
   deleteBlog: PropTypes.func.isRequired
 }
 
-export default function Blog ({ blog, updateBlog, deleteBlog }) {
+export default function BlogCard ({ blog, updateBlog, deleteBlog }) {
   const [viewMore, setViewMore] = useState(false)
 
   const handleUpdateLikes = () => {
@@ -44,7 +45,9 @@ export default function Blog ({ blog, updateBlog, deleteBlog }) {
       <CardHeader>
         <CardTitle>
           <div className='flex flex-row space-x-4'>
-          <h3 className='text-3xl'>{blog.title}</h3>
+            <Link to={`/blogs/${blog.id}`}>
+              <h3 className='text-3xl'>{blog.title}</h3>
+            </Link>
           <Togglable visible={viewMore} setVisibility={setViewMore} buttonLabel='View more' />
           </div>
         </CardTitle>

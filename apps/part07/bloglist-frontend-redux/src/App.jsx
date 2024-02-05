@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import Blog from './components/Blog'
 import Login from './pages/Login'
 import blogService from './services/blogs'
 import BlogForm from './components/BlogForm'
@@ -13,6 +12,9 @@ import { initializeBlogs } from './reducers/blogSlice'
 import NavBar from './components/NavBar'
 import Footer from './components/Footer'
 import Layout from './components/Layout'
+import Users from './pages/Users'
+import User from './pages/User'
+import Blog from './pages/Blog'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -70,7 +72,12 @@ const App = () => {
             ? (
             <>
             <Route path="/" element={<Layout/>}>
-              <Route index element={<Blogs />} />
+              <Route element={<Blogs />} />
+              <Route path='/users' element={<Users/>} />
+              <Route path='/users/:userId' element={<User/>} />
+              <Route path='/' element={<Blogs />} />
+              <Route path='/blogs/:blogId' element={<Blog />} />
+
               {/* <Route path='/about' element={<About />} />
               <Route path='/contact' element={<Contact />} /> */}
             </Route>

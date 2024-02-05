@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
-import Blog from './Blog'
+import Blog from './BlogCard'
 import blogService from '../services/blogs'
 import { useSelector } from 'react-redux'
 import { Button } from './ui/button'
+import BlogCard from './BlogCard'
 
 export default function BlogList ({ user, sortedBlogs }) {
   const blogs = useSelector((state) => state.blogs)
@@ -12,7 +13,7 @@ export default function BlogList ({ user, sortedBlogs }) {
   const updateBlog = async (blog) => {
     try {
       await blogService.updateBlog(blog)
-      const blogs = await blogService.getAll()
+      const blogs = await blogService.getAllBlogs()
       sortedBlogs(blogs)
     } catch (exception) {
       console.log(exception)
@@ -36,7 +37,7 @@ export default function BlogList ({ user, sortedBlogs }) {
         <div className="grid grid-cols-4 gap-4 mt-6 mb-28">
             {blogs.length === 0 && <p>No blogs to show</p>}
             {blogs.map(blog =>
-                <Blog key={blog.id} blog={blog} updateBlog={updateBlog} deleteBlog={deleteBlog} />
+                <BlogCard key={blog.id} blog={blog} updateBlog={updateBlog} deleteBlog={deleteBlog} />
             )}
         </div>
     </div>

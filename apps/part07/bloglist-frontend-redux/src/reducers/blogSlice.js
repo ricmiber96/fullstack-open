@@ -11,11 +11,12 @@ const blogSlice = createSlice({
   reducers: {
     createBlog: (state, action) => {
       const newBlog = action.payload
-      return state.blogs.push(newBlog)
+      console.log('newBlog:', newBlog)
+      return state.concat(newBlog)
     },
     appendBlog: (state, action) => {
       const newBlog = action.payload
-      return state.blogs.push(newBlog)
+      return state.concat(newBlog)
     },
     setBlogs: (state, action) => {
       const blogs = action.payload
