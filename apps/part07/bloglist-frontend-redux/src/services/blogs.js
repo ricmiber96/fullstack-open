@@ -38,6 +38,13 @@ const updateBlog = async (blog) => {
   return response.data
 }
 
+const addComent = async (id, comment) => {
+  const baseUrl = `${getBaseUrl()}/api/blogs/${id}/comments`
+  console.log('addComent:', baseUrl, comment)
+  const response = await axios.post(baseUrl, comment)
+  return response.data
+}
+
 const deleteBlog = async (blog, user) => {
   const baseUrl = `${getBaseUrl()}/api/blogs/${blog.id}`
   const headers = getHeaders(user)
@@ -46,4 +53,4 @@ const deleteBlog = async (blog, user) => {
   return response.data
 }
 
-export default { getAllBlogs, addBlog, updateBlog, deleteBlog }
+export default { getAllBlogs, addBlog, updateBlog, addComent, deleteBlog }

@@ -14,22 +14,24 @@ import {
   CardTitle
 } from '@/components/ui/card'
 import { Button } from './ui/button'
+import { useDispatch } from 'react-redux'
+import { updateLikes } from '@/reducers/blogSlice'
 
 BlogCard.propTypes = {
   blog: PropTypes.object.isRequired,
-  updateBlog: PropTypes.func.isRequired,
   deleteBlog: PropTypes.func.isRequired
 }
 
-export default function BlogCard ({ blog, updateBlog, deleteBlog }) {
+export default function BlogCard ({ blog, deleteBlog }) {
   const [viewMore, setViewMore] = useState(false)
+  const dispatch = useDispatch()
 
   const handleUpdateLikes = () => {
     const newBlog = {
       ...blog,
       likes: blog.likes + 1
     }
-    updateBlog(newBlog)
+    dispatch(updateLikes(newBlog))
   }
 
   // const handleDeleteBlog = (blog) => {

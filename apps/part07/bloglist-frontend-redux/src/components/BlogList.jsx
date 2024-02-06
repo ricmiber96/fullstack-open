@@ -37,7 +37,7 @@ export default function BlogList ({ user, sortedBlogs }) {
         <div className="grid grid-cols-4 gap-4 mt-6 mb-28">
             {blogs.length === 0 && <p>No blogs to show</p>}
             {blogs.map(blog =>
-                <BlogCard key={blog.id} blog={blog} updateBlog={updateBlog} deleteBlog={deleteBlog} />
+                <BlogCard key={blog.id} blog={blog} deleteBlog={deleteBlog} />
             )}
         </div>
     </div>

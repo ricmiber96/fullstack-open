@@ -9,7 +9,12 @@ const blogSchema = new mongoose.Schema({
     // The type of the user property is a reference to the User model
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
-  }
+  },
+  comments: [
+    {
+      comment: String
+    }
+  ]
 })
 
 // Transform the _id property to id and delete the _id and __v properties

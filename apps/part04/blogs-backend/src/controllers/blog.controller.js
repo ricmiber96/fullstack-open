@@ -73,14 +73,30 @@ blogRouter.post('/', middleware.userExtractor, async (req, res) => {
   }
 })
 
+blogRouter.post('/:id/comments', async (req, res) => {
+  const id = req.params.id
+  const { comment } = req.body
+  try {
+    const blogUpdate = await Blog.findById(id)
+    console.log('blogUpdate:', blogUpdate, 'comment:', comment)
+    blogUpdate.comments = blogUpdate.comments.concat(comment)
+    const updatedBlog = Blog.findByIdAndUpdate(id, blogUpdate, { new: true })
+    res.json(updatedBlog)
+  } catch (error) {
+    res.status(404).end()
+    res.json({ error: 'blog not found' })
+  }
+})
+
 blogRouter.put('/:id', async (req, res) => {
   const id = req.params.id
-  const { title, author, url, likes } = req.body
+  const { title, author, url, likes, comments } = req.body
   const updateBlog = {
     title,
     author,
     url,
-    likes
+    likes,
+    comments
   }
   // const user = req.user
   // try {
