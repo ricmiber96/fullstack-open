@@ -38,10 +38,10 @@ const updateBlog = async (blog) => {
   return response.data
 }
 
-const addComent = async (id, comment) => {
+const addComent = async (id, content) => {
   const baseUrl = `${getBaseUrl()}/api/blogs/${id}/comments`
-  console.log('addComent:', baseUrl, comment)
-  const response = await axios.post(baseUrl, comment)
+  console.log('addComent:', baseUrl, content)
+  const response = await axios.post(baseUrl, content)
   return response.data
 }
 

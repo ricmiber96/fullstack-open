@@ -5,26 +5,33 @@ import { Button } from './ui/button'
 import { Plus, Send, SendHorizonal } from 'lucide-react'
 import { Label } from './ui/label'
 import { Input } from './ui/input'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { addNewComment, createNewBlog } from '@/reducers/blogSlice'
 import { useParams } from 'react-router-dom'
 
 export default function DialogAddComment (props) {
-  const [comment, setComment] = useState('')
+  const user = useSelector((state) => state.auth.user)
+  const [comment, setComment] = useState({
+    content: ''
+  })
   const dispatch = useDispatch()
   const { blogId } = useParams()
 
   const handleChange = (e) => {
     e.preventDefault()
-    setComment(e.target.value)
+    const { name, value } = e.target
+    setComment({ ...comment, [name]: value })
+    console.log(comment)
   }
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    console.log(comment)
-    console.log(blogId)
-    dispatch(addNewComment(blogId, comment))
-    setComment('')
+    if (comment.content !== '') {
+      console.log(comment)
+      console.log(blogId)
+      dispatch(addNewComment(blogId, comment))
+      setComment({ content: '' })
+    }
   }
 
   return (
@@ -46,10 +53,10 @@ export default function DialogAddComment (props) {
                     Comment
                 </Label>
                 <Input
-                    name="comment"
+                    name="content"
                     className="col-span-3"
                     placeholder="New Comment"
-                    value={comment}
+                    value={comment.content}
                     onChange={handleChange}
                 />
                 </div>

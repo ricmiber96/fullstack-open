@@ -8,6 +8,7 @@ const middleware = require('./utils/middleware')
 const blogRouter = require('./controllers/blog.controller')
 const userRouter = require('./controllers/user.controller')
 const loginRouter = require('./controllers/login.controller')
+const commentsRouter = require('./controllers/comment.controller')
 
 // async function dbConnect () {
 //   try {
@@ -56,6 +57,7 @@ app.use(middleware.tokenExtractor)
 app.use('/api/login', loginRouter)
 app.use('/api/blogs', blogRouter)
 app.use('/api/users', userRouter)
+app.use('/api/blogs', commentsRouter)
 
 if (process.env.NODE_ENV === 'dev') {
   const testingRouter = require('./controllers/testing.controller')

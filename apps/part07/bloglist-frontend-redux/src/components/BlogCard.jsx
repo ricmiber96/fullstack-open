@@ -4,7 +4,7 @@ import Togglable from './Togglable'
 import { Link } from 'react-router-dom'
 
 // ICONS
-import { ThumbsUp, User } from 'lucide-react'
+import { Link2, ThumbsUp, User } from 'lucide-react'
 
 import {
   Card,
@@ -70,7 +70,7 @@ export default function BlogCard ({ blog, deleteBlog }) {
               <p>{blog.likes}</p>
             </div>
             <div className='flex flex-row gap-4'>
-              <Link width={18} />
+              <Link2 width={18} />
               {blog.url}
             </div>
             <div className='flex flex-row w-full space-x-4 mt-4'>
