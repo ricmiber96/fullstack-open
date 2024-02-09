@@ -1,22 +1,21 @@
 import { gql, useQuery } from '@apollo/client';
 import React from 'react';
 
-export default function Books(props) {
 
-    if (!props.show) {
-        return null
-      }
+
+export default function Books(props) {
 
       const books = []
       const ALL_BOOKS = gql`
-        query {
-            allBooks {
-            title
-            author
-            published
-            }
-        }
-        `
+      query {
+          allBooks {
+          title
+          author
+          published
+          }
+      }
+      `
+  
         const result = useQuery(ALL_BOOKS)
         if (result.loading)  {
             return <div>loading...</div>
@@ -29,6 +28,10 @@ export default function Books(props) {
             console.log(books)
         }
 
+  
+        if (!props.show) {
+          return null
+        }
   
 
   return (

@@ -1,12 +1,12 @@
-import { gql, useQuery } from '@apollo/client';
-import React from 'react';
+import { gql, useMutation, useQuery } from '@apollo/client';
+import React, { useState } from 'react';
 
 export default function Authors(props) {
     
-    if (!props.show) {
-        return null
-      }
+  
       const authors = []
+      const [name, setName] = useState('')
+      const [born, setBorn] = useState(0)
 
       const ALL_AUTHORS = gql`
         query {
@@ -18,6 +18,32 @@ export default function Authors(props) {
         }
         `
 
+        const EDIT_YEAR = gql`
+        mutation editNumber($name: String!, $born: Int!) {
+            editAuthor(
+                name: $name,
+                setBornTo: $born
+            ) {
+                name
+                born
+            }
+        }
+        `
+
+      const [changeYear] = useMutation(EDIT_YEAR, {
+            refetchQueries: [{ query: ALL_AUTHORS }]
+        } )
+
+      const handleSubmit = (event) => {
+        event.preventDefault()
+        changeYear({ variables: { name, born } })
+      }
+
+      const handleChange = (event) => {
+        event.preventDefault()
+       setName(event.target.value)
+      }
+
     const result = useQuery(ALL_AUTHORS)
     if (result.loading)  {
         return <div>loading...</div>
@@ -28,6 +54,10 @@ export default function Authors(props) {
     else {
         authors.push(...result.data.allAuthors)
         console.log(authors)
+    }
+
+    if (!props.show) {
+      return null
     }
 
   return (
@@ -49,6 +79,22 @@ export default function Authors(props) {
           ))}
         </tbody>
       </table>
+      <h2>Set birthyear</h2>
+      <form onSubmit={handleSubmit}>
+        <div>
+          <label>name</label>
+          <select value={name} onChange={handleChange}>
+            {authors.map((a) => (
+              <option key={a.name} value={a.name}>{a.name}</option>
+            ))}
+          </select>
+        </div>
+        <div>
+          born
+          <input type="number" value={born}  onChange={({target}) => setBorn(parseInt(target.value))} />
+        </div>
+        <button type="submit">update author</button>
+      </form>
     </div>
   );
 }
