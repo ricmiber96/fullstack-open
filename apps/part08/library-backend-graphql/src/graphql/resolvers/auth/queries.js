@@ -1,7 +1,7 @@
 const User = require('../../../models/user.model')
 
 const authQueries = {
-  findAllUsers: async () => {
+  allUsers: async () => {
     return User.find({})
   },
   me: async (root, args, context) => {

@@ -7,7 +7,7 @@ const typeDefs = `
     findAuthorWithBooksCounter(author: String!): [Author!]!
     findAuthorByName(author: String!): [Author!]!
     findBookByAuthorOrGenre(author: String, genre: String): [Book!]!
-    findAllUsers: [User!]!
+    allUsers: [User!]!
     me: User
   }
   type ID {

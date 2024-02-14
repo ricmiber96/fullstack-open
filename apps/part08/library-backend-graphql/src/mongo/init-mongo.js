@@ -1,26 +1,98 @@
 db = db.getSiblingDB('libraryDB')
-
 db.createCollection('books')
 db.createCollection('authors')
+// db.books.insertMany([
+//   {
+//     title: 'Clean Code',
+//     published: 2008,
+//     author: {
+//       name: 'Robert Martin',
+//       born: 1952
+//     },
+//     genres: ['refactoring']
+//   }
+// ])
+
+const authorId = db.authors.insertOne({
+  name: 'John Doe',
+  born: 1980
+}).insertedId
+
 db.books.insertMany([
-    {
-              title: 'Clean Code',
-              published: 2008,
-              author: {
-                name: 'Robert Martin',
-                born: 1952,
-              },
-              genres: ['refactoring']
-    }
+  {
+    title: 'Book 1',
+    published: 2022,
+    author: authorId,
+    genres: ['Fiction']
+  },
+  {
+    title: 'Book 2',
+    published: 2023,
+    author: authorId,
+    genres: ['Mystery']
+  },
+  {
+    title: 'Book 3',
+    published: 2021,
+    author: authorId,
+    genres: ['Sci-Fi']
+  }
 ])
 
-db.authors.insertMany([
-    { 
-        name: 'Robert Martin',
-        born: 1952,
-    }
-])
+// Verify the inserted documents
+db.books.find().pretty()
 
+// db.authors.insertMany([
+//   {
+//     name: 'Robert Martin',
+//     born: 1952
+//   }
+// ])
+
+// const MongoClient = require('mongodb').MongoClient
+
+// const uri = 'mongodb://localhost:27017/libraryDB'
+
+// const initDB = async () => {
+//     console.log('initDB')
+//     const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true })
+//     try {
+//         await client.connect()
+//         const db = client.db('libraryDB')
+//         const authors = db.collection('authors')
+//         const books = db.collection('books')
+
+//         const author = new Author({
+//             name: 'Robert Martin',
+//             born: 1952
+//         })
+
+//         author.save().then(savedAuthor => {
+
+//             const book = new Book({
+//                 title: 'Clean Code',
+//                 published: 2007,
+//                 author: savedAuthor._id,
+//                 genres: ['refactoring']
+//             })
+
+//             book.save().then(savedBook => {
+//                 console.log('savedAuthor', savedAuthor)
+//                 console.log('savedBook', savedBook)
+
+//             }).catch(error => {
+//                 console.error(error)
+//             })
+//         }).catch(error => {
+//             console.error(error)
+//         })
+//     } catch (error) {
+//         console.error(error)
+//     } finally {
+//         await client.close()
+//     }
+
+// initDB()
 
 // let authors = [
 //     {
@@ -38,16 +110,16 @@ db.authors.insertMany([
 //       id: "afa5b6f1-344d-11e9-a414-719c6709cf3e",
 //       born: 1821
 //     },
-//     { 
+//     {
 //       name: 'Joshua Kerievsky', // birthyear not known
 //       id: "afa5b6f2-344d-11e9-a414-719c6709cf3e",
 //     },
-//     { 
+//     {
 //       name: 'Sandi Metz', // birthyear not known
 //       id: "afa5b6f3-344d-11e9-a414-719c6709cf3e",
 //     },
 //   ]
-  
+
 //   let books = [
 //     {
 //       title: 'Clean Code',
@@ -76,7 +148,7 @@ db.authors.insertMany([
 //       author: 'Joshua Kerievsky',
 //       id: "afa5de01-344d-11e9-a414-719c6709cf3e",
 //       genres: ['refactoring', 'patterns']
-//     },  
+//     },
 //     {
 //       title: 'Practical Object-Oriented Design, An Agile Primer Using Ruby',
 //       published: 2012,
@@ -102,4 +174,3 @@ db.authors.insertMany([
 
 // db.authors.insert(authors)
 // db.books.insert(books)
-
