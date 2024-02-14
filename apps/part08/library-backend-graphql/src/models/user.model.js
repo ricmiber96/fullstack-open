@@ -1,23 +1,17 @@
 const mongoose = require('mongoose')
-const authorSchema = new mongoose.Schema({
-  name: {
+const userSchema = new mongoose.Schema({
+  username: {
     type: String,
     required: true,
     unique: true,
-    minlength: 4
+    minlength: 3
   },
-  born: {
-    type: Number
-  },
-  books: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Book'
-    }
-  ]
+  favoriteGenre: {
+    type: String,
+    required: true
+  }
 })
-
-authorSchema.set('toJSON', {
+userSchema.set('toJSON', {
   transform: (document, returnedObject) => {
     returnedObject.id = returnedObject._id.toString()
     // Delete the _id and __v properties
@@ -26,4 +20,4 @@ authorSchema.set('toJSON', {
   }
 })
 
-module.exports = mongoose.model('Author', authorSchema)
+module.exports = mongoose.model('User', userSchema)
