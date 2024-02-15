@@ -32,6 +32,11 @@ export default function LoginForm(props) {
         
     }
 
+    
+    if (!props.show) {
+      return null
+    }
+
   return (
     <div>
       <form onSubmit={handleSubmit}>

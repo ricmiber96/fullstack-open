@@ -21,7 +21,28 @@ export const ALL_BOOKS = gql`
             bookCount
           }
           id
-          genres
+        genres {
+            name
+            }
         }
     }
     `
+
+ export const ALL_AUTHORS = gql`
+    query {
+        allAuthors {
+        name
+        born
+        bookCount
+        }
+    }
+    `
+
+export const ALL_GENRES = gql`
+    query {
+        allGenres{
+            name
+        }
+    }
+`
+

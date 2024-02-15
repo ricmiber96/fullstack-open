@@ -4,6 +4,7 @@ const typeDefs = `
     authorCount: Int!
     allBooks: [Book!]!
     allAuthors: [Author!]!
+    allGenres: [Genre!]!
     findAuthorWithBooksCounter(author: String!): [Author!]!
     findAuthorByName(author: String!): [Author!]!
     findBookByAuthorOrGenre(author: String, genre: String): [Book!]!
@@ -17,9 +18,15 @@ const typeDefs = `
     title: String!
     published: Int!
     author: Author!
-    genres: [String!]!
+    genres: [Genre!]!
     id: ID!
 }
+
+type Genre {
+    name: String!
+    id: ID!
+}
+
  type Author {
     name: String!
     id: ID!

@@ -1,6 +1,7 @@
 db = db.getSiblingDB('libraryDB')
 db.createCollection('books')
 db.createCollection('authors')
+db.createCollection('genres')
 // db.books.insertMany([
 //   {
 //     title: 'Clean Code',
@@ -18,24 +19,36 @@ const authorId = db.authors.insertOne({
   born: 1980
 }).insertedId
 
+const genreIds = db.genres.insertMany([
+  { name: 'Fiction' },
+  { name: 'Mystery' },
+  { name: 'Sci-Fi' }
+]).insertedIds
+
 db.books.insertMany([
   {
     title: 'Book 1',
     published: 2022,
     author: authorId,
-    genres: ['Fiction']
+    genres: [
+      genreIds[0], genreIds[1]
+    ]
   },
   {
     title: 'Book 2',
     published: 2023,
     author: authorId,
-    genres: ['Mystery']
+    genres: [
+      genreIds[1]
+    ]
   },
   {
     title: 'Book 3',
     published: 2021,
     author: authorId,
-    genres: ['Sci-Fi']
+    genres: [
+      genreIds[2]
+    ]
   }
 ])
 

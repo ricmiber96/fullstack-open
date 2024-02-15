@@ -1,48 +1,42 @@
 import { gql, useQuery } from '@apollo/client';
-import React from 'react';
-import { ALL_BOOKS } from '../../queries';
+import React, { useState } from 'react';
+import { ALL_BOOKS, ALL_GENRES } from '../../queries';
 
 
 
-export default function Books(props) {
+export default function Books({show, books}) {
 
-      const books = []
-      // const ALL_BOOKS = gql`
-      // query {
-      //     allBooks {
-      //     title
-      //     author
-      //     published
-      //     }
-      // }
-      // `
-  
-        const result = useQuery(ALL_BOOKS)
-
-
-        if (result.loading)  {
-            return <div>loading...</div>
-        }
-        if (!result.data) {
-            return <div>no data</div>
-        }
-        else {
-            books.push(...result.data.allBooks)
-            console.log(books)
-        }
-
-  
-        if (!props.show) {
-          return null
-        }
-
-        console.log('books', books)
+      const [filter, setFilter] = useState('')
+      const resultBooks = useQuery(ALL_BOOKS)
+      const resultGenres = useQuery(ALL_GENRES)
+      console.log('result', resultBooks)
+      console.log('resultGenres', resultGenres)
+      if (!show) {
+        return null
+      }
+      const handleChange = (event) => {
+        event.preventDefault()
+       setFilter(event.target.value)
+        
+        console.log('genre', event.target.value)
+        console.log('filteredBooks', filteredBooks)
+      }
+      const filteredBooks = books.filter((book) => filter !== '' ? book.genres.some(bookGenre => bookGenre.name === filter ) : books)
+      console.log('books', filteredBooks)
   
 
   return (
     <div>
       <h2>books</h2>
-
+        <div>
+        in genre
+        <select onChange={handleChange}>
+          <option value=''>all genres</option>
+          {resultGenres.data.allGenres.map((a) => (
+            <option key={a.name} value={a.name}>{a.name}</option>
+          ))}
+        </select>
+        </div>
       <table>
         <thead>
           <tr>
@@ -52,7 +46,7 @@ export default function Books(props) {
           </tr>
         </thead>
         <tbody>
-          {books.map((a) => (
+          {filteredBooks.map((a) => (
             <tr key={a.title}>
               <td style={{textAlign: 'left'}}>{a.title}</td>
               <td>{a.author.name}</td>

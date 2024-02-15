@@ -1,22 +1,15 @@
 import { gql, useMutation, useQuery } from '@apollo/client';
 import React, { useState } from 'react';
+import { ALL_AUTHORS } from '../../queries';
 
-export default function Authors(props) {
+export default function Authors({show, token}) {
     
   
       const authors = []
       const [name, setName] = useState('')
       const [born, setBorn] = useState(0)
 
-      const ALL_AUTHORS = gql`
-        query {
-            allAuthors {
-            name
-            born
-            bookCount
-            }
-        }
-        `
+   
 
         const EDIT_YEAR = gql`
         mutation editNumber($name: String!, $born: Int!) {
@@ -56,7 +49,7 @@ export default function Authors(props) {
         console.log(authors)
     }
 
-    if (!props.show) {
+    if (!show) {
       return null
     }
 
@@ -79,22 +72,28 @@ export default function Authors(props) {
           ))}
         </tbody>
       </table>
-      <h2>Set birthyear</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>name</label>
-          <select value={name} onChange={handleChange}>
-            {authors.map((a) => (
-              <option key={a.name} value={a.name}>{a.name}</option>
-            ))}
-          </select>
-        </div>
-        <div>
-          born
-          <input type="number" value={born}  onChange={({target}) => setBorn(parseInt(target.value))} />
-        </div>
-        <button type="submit">update author</button>
-      </form>
+      {
+        token ? (
+          <>
+          <h2>Set birthyear</h2>
+          <form onSubmit={handleSubmit}>
+            <div>
+              <label>name</label>
+              <select value={name} onChange={handleChange}>
+                {authors.map((a) => (
+                  <option key={a.name} value={a.name}>{a.name}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              born
+              <input type="number" value={born}  onChange={({target}) => setBorn(parseInt(target.value))} />
+            </div>
+            <button type="submit">update author</button>
+          </form>
+          </>) : null
+      }
+     
     </div>
   );
 }

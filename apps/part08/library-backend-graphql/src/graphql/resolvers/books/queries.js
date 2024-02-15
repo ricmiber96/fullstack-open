@@ -2,7 +2,7 @@ const Book = require('../../../models/book.model')
 
 const bookQueries = {
   bookCount: async () => Book.collection.countDocuments(),
-  allBooks: async () => { return await Book.find({}).populate('author') },
+  allBooks: async () => { return await Book.find({}).populate('author').populate('genres') },
   findBookByAuthorOrGenre: async (root, args) => {
     if (args.author && args.genre) {
       const foundBooks = await Book.find({ genres: { $in: args.genre } }).populate({ path: 'author', match: { name: args.author } })
