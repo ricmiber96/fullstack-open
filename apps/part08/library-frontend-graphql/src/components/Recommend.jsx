@@ -1,17 +1,31 @@
+import { useQuery } from '@apollo/client';
 import React from 'react';
+import { FIND_BOOKS_BY_AUTHOR_OR_GENRE } from '../../queries';
 
 export default function Recommend({show, books, user}) {
+
+  const {loading, error, data} = useQuery(FIND_BOOKS_BY_AUTHOR_OR_GENRE, {
+    variables: {genre: user.me.favoriteGenre}
+  })
 
     if (!show) {
         return null
     }
+ 
+    if (loading) return 'Loading...';
+    if (error) return `Error! ${error.message}`;
+    console.log('data', data)
+    const actualUser = user.me
+    // FILTER BOOKS BY USER FAVORITE GENRE ON FRONTEND
+    // const filteredBooks = books.filter((book) => actualUser.favoriteGenre !== '' ? book.genres.some(bookGenre => bookGenre.name === actualUser.favoriteGenre ) : books)
 
-    const filteredBooks = books.filter((book) => user.favoriteGenre !== '' ? book.genres.some(bookGenre => bookGenre.name === user.favoriteGenre ) : books)
+    // FILTER BOOKS BY USER FAVORITE GENRE ON BACKEND
+    const filteredBooks = data.findBookByAuthorOrGenre
 
   return (
     <div>
       <h2>recommendations</h2>
-        <p>books in your favorite genre <strong>{user.favoriteGenre}</strong></p>
+        <p>books in your favorite genre <strong>{actualUser.favoriteGenre}</strong></p>
         <table>
         <thead>
           <tr>

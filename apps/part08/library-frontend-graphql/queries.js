@@ -27,6 +27,19 @@ export const ALL_BOOKS = gql`
         }
     }
     `
+export const FIND_BOOKS_BY_AUTHOR_OR_GENRE =  gql`
+    query FindBookByAuthorOrGenre($author: String, $genre: String) {
+      findBookByAuthorOrGenre(author: $author, genre: $genre) {
+        title
+        genres {
+          name
+        }
+        author {
+          name
+        }
+      }
+    }
+    `;
 
  export const ALL_AUTHORS = gql`
     query {
@@ -46,3 +59,11 @@ export const ALL_GENRES = gql`
     }
 `
 
+export const USER = gql`
+    query {
+        me {
+            username
+            favoriteGenre
+        }
+    }
+`

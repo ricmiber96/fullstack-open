@@ -43,6 +43,7 @@ export default function NewBook(props) {
     const submit = async (event) => {
       event.preventDefault()
       addGenre()
+      console.log('variables', { title, author, published, genres })
       createBook({ variables: { title, author, published: parseInt(published), genres } })
 
       console.log('add book...')

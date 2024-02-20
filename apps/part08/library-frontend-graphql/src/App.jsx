@@ -4,18 +4,23 @@ import Authors from './components/Authors'
 import Books from './components/Books'
 import NewBook from './components/NewBook'
 import LoginForm from './components/LoginForm'
-import { useQuery } from '@apollo/client'
-import { ALL_AUTHORS, ALL_BOOKS } from '../queries'
+import { useApolloClient, useQuery } from '@apollo/client'
+import { ALL_AUTHORS, ALL_BOOKS, USER } from '../queries'
 import Recommend from './components/Recommend'
+
 
 function App() {
   const [page, setPage] = useState('authors')
   const books = useQuery(ALL_BOOKS)
   const authors = useQuery(ALL_AUTHORS)
+  const user = useQuery(USER)
   const token = localStorage.getItem('library-user-token')
   console.log('token', token)
+  const client = useApolloClient()
+
   const logout = () => {  
     localStorage.removeItem('library-user-token')
+    client.resetStore()
     window.location.reload()
   }
 
@@ -46,7 +51,7 @@ function App() {
       <Authors show={page === 'authors'} token={token} />
       <Books show={page === 'books'} books={books.data.allBooks} />
       <NewBook show={page === 'add'} />
-      <Recommend show={page === 'recommend'} books={books.data.allBooks} />
+      <Recommend show={page === 'recommend'} user={user.data} books={books.data.allBooks} />
             
     </div>
     </>
