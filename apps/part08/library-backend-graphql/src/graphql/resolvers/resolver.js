@@ -1,5 +1,5 @@
 const { authorMutations, authorQueries } = require('./author')
-const { bookMutations, bookQueries } = require('./books')
+const { bookMutations, bookQueries, bookSubscriptions } = require('./books')
 const { authQueries, authMutations } = require('./auth')
 const { genreQueries } = require('./generes')
 
@@ -14,6 +14,9 @@ const resolvers = {
     ...bookMutations,
     ...authorMutations,
     ...authMutations
+  },
+  Subscription: {
+    ...bookSubscriptions
   }
 }
 

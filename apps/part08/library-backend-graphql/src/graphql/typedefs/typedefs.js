@@ -65,6 +65,10 @@ type Genre {
         ): Token
     }
 
+    type Subscription {
+      bookAdded: Book!
+    }
+
 `
 
 module.exports = { typeDefs }

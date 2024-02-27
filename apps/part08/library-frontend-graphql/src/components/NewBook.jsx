@@ -1,5 +1,6 @@
 import { gql, useMutation } from '@apollo/client';
 import React, { useState } from 'react';
+import { ALL_AUTHORS, ALL_BOOKS, ALL_GENRES, CREATE_BOOK } from '../../queries';
 
 export default function NewBook(props) {
     const [title, setTitle] = useState('')
@@ -8,52 +9,43 @@ export default function NewBook(props) {
     const [genre, setGenre] = useState('')
     const [genres, setGenres] = useState([])
 
-    const ALL_BOOKS = gql`
-    query {
-        allBooks {
-        title
-        authorO
-        published
-        }
-    }
-    `
+   
 
-    const CREATE_BOOK = gql`
-        mutation createBook($title: String!, $author: String!, $published: Int!, $genres: [String!]!) {
-            addBook(
-                title: $title,
-                author: $author,
-                published: $published,
-                genres: $genres
-            ) {
-                title
-                author
-                published
-                genres
-            }
-      }
-    `
+    // const CREATE_BOOK = gql`
+    //     mutation createBook($title: String!, $published: Int!, $author: String!, $genres: [String!]!) {
+    //         addBook(title: $title, published: $published, author: $author, genres: $genres) {
+    //             title
+    //             author
+    //             published
+    //         }
+    //   }
+    // `
 
     const [createBook] = useMutation(CREATE_BOOK, {
-      refetchQueries: [{ query: ALL_BOOKS }]
-    } )
+    refetchQueries: [{ query: ALL_BOOKS}, { query: ALL_GENRES }, { query: ALL_AUTHORS}],
+    onError: (error) => {
+      const message = error
+      console.log('error', message)
+    }
+  })
   
   
   
-    const submit = async (event) => {
+    const handleSubmit  = async (event) => {
       event.preventDefault()
-      addGenre()
-      console.log('variables', { title, author, published, genres })
-      createBook({ variables: { title, author, published: parseInt(published), genres } })
+      try {
+        console.log('variables', { title, author, published, genres })
+        const result = await createBook({ variables: { title, published: parseInt(published), author, genres } })
+        console.log('result', result)
 
-      console.log('add book...')
-
-  
-      setTitle('')
-      setPublished('')
-      setAuthor('')
-      setGenres([])
-      setGenre('')
+        setTitle('')
+        setPublished('')
+        setAuthor('')
+        setGenres([])
+        setGenre('')
+      } catch (error) {
+        console.log('error', error)
+      }
     }
   
     const addGenre = () => {
@@ -68,7 +60,7 @@ export default function NewBook(props) {
     
     return (
       <div>
-        <form onSubmit={submit}>
+        <form onSubmit={handleSubmit}>
           <div>
             title
             <input

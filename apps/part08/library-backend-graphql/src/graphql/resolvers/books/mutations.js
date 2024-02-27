@@ -8,6 +8,8 @@ const pubsub = new PubSub()
 
 const bookMutations = {
   addBook: async (root, args, context) => {
+    console.log('**********addBook**********')
+    console.log('args', args)
     const currentUser = context.currentUser
     if (!currentUser) {
       throw new GraphQLError('Not authenticated', {
