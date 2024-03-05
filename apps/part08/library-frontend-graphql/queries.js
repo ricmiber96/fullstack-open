@@ -66,6 +66,7 @@ export const FIND_BOOKS_BY_AUTHOR_OR_GENRE =  gql`
         name
         born
         bookCount
+        id
         }
     }
     `
@@ -85,4 +86,13 @@ export const USER = gql`
             favoriteGenre
         }
     }
+`
+
+export const BOOK_ADDED = gql`
+  subscription {
+    bookadded {
+      ...BookDetails
+    }
+  }
+  ${BOOK_DETAILS}
 `

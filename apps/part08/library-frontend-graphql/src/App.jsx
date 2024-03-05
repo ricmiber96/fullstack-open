@@ -4,8 +4,8 @@ import Authors from './components/Authors'
 import Books from './components/Books'
 import NewBook from './components/NewBook'
 import LoginForm from './components/LoginForm'
-import { useApolloClient, useQuery } from '@apollo/client'
-import { ALL_AUTHORS, ALL_BOOKS, USER } from '../queries'
+import { useApolloClient, useQuery, useSubscription } from '@apollo/client'
+import { ALL_AUTHORS, ALL_BOOKS, CREATE_BOOK, USER } from '../queries'
 import Recommend from './components/Recommend'
 
 
@@ -17,6 +17,42 @@ function App() {
   const token = localStorage.getItem('library-user-token')
   console.log('token', token)
   const client = useApolloClient()
+
+  const updateCacheWith = (addedPerson) => {
+    const includedIn = (set, object) => 
+      set.map(p => p.id).includes(object.id)  
+
+    const dataInStore = client.readQuery({ query: ALL_BOOKS })
+    if (!includedIn(dataInStore.allPersons, addedPerson)) {
+      client.writeQuery({
+        query: ALL_BOOKS,
+        data: { allPersons : dataInStore.allPersons.concat(addedPerson) }
+      })
+    }   
+  }
+
+  useSubscription(CREATE_BOOK, {
+    onData:({data, client}) => {
+      console.log('data', data)
+      const addedBook = data.data.bookAdded 
+      console.log('addedBook', addedBook)
+      try {
+        window.alert(`New book added: ${addedBook.title}`)
+        updateCacheWith(client.cache, {query: ALL_BOOKS}, addedBook)
+      }catch(error){
+        console.log('error', error)
+      }
+
+      client.cache.updateQuery({query: ALL_BOOKS}, ({
+        allBooks
+      }) => {
+        return {
+          allBooks: allBooks.concat(addedBook)
+        }
+      })
+    }
+  })
+
 
   const logout = () => {  
     localStorage.removeItem('library-user-token')

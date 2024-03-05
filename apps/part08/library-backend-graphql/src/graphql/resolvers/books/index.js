@@ -1,6 +1,6 @@
 const bookMutations = require('./mutations')
 const bookQueries = require('./queries')
-const bookSubscriptions = require('./subcriptions')
+const bookSubscriptions = require('./subscriptions')
 
 module.exports = {
   bookMutations,

@@ -3,7 +3,6 @@ const Author = require('../../../models/author.model')
 const Genre = require('../../../models/genre.model')
 const { GraphQLError } = require('graphql')
 const { PubSub } = require('graphql-subscriptions')
-
 const pubsub = new PubSub()
 
 const bookMutations = {
@@ -120,7 +119,6 @@ const bookMutations = {
         foundAuthor.books = foundAuthor.books.concat(book.id)
         await foundAuthor.save()
         const newBook = await Book.findById(book.id).populate('author').populate('genres')
-        pubsub.publish('BOOK_ADDED', { bookAdded: newBook })
       } catch (error) {
         throw new GraphQLError('Error saving book', {
           extensions: {
@@ -131,6 +129,7 @@ const bookMutations = {
         })
       }
       const findNewBook = await Book.findById(book.id).populate('author').populate('genres')
+      pubsub.publish('BOOK_ADDED', { bookAdded: findNewBook })
       return findNewBook
     }
   }
