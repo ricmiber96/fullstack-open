@@ -1,25 +1,24 @@
 import React from 'react';
+import {  CoursePart } from '../utils/types';
+import Part from './Part';
 
 type ContentProps = {
     // TODO: Define the component props
-    arrayContent: {
-        name: string;
-        exerciseCount: number;
-    }[]
+    arrayContent: CoursePart[];
 };
 
 export const Content: React.FC<ContentProps> = ({arrayContent }) => {
     return (
         <div>
-        <p>
-        {arrayContent[0].name} {arrayContent[0].exerciseCount}
-        </p>
-        <p>
-        {arrayContent[1].name} {arrayContent[1].exerciseCount}
-        </p>
-        <p>
-        {arrayContent[2].name} {arrayContent[2].exerciseCount}
-        </p>
+            {
+                arrayContent.map((part, index) => {
+                    return (
+                       <div key={index}>
+                           <Part part={part} />
+                          </div>
+                    )
+                })
+            }
         </div>
     );
 };
