@@ -16,12 +16,14 @@ const getPatientsWithoutSsn = (): NonSensitivePatients[] => {
         name,
         dateOfBirth,
         gender,
-        occupation}) => ({
+        occupation,
+        entries}) => ({
             id,
             name,
             dateOfBirth,
             gender,
-            occupation
+            occupation,
+            entries
         }));
 };
 

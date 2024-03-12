@@ -1,3 +1,7 @@
+export interface RouteParams {
+  id: string;
+  [key: string]: string | undefined;
+}
 export interface Diagnosis {
   code: string;
   name: string;

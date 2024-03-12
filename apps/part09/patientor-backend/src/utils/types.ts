@@ -1,6 +1,10 @@
-export type ID = {
+export interface ID {
     id: `${string}-${string}-${string}-${string}-${string}`
-};
+}
+
+export interface Entry {
+
+}
 
 export interface Patient {
     id: string;
@@ -9,11 +13,12 @@ export interface Patient {
     ssn: string;
     gender: Gender
     occupation: string;
+    entries: Entry[];
 }
 
 export type NewPatientEntry = Omit<Patient, 'id'>;
 
-export type NonSensitivePatients = Omit<Patient, 'ssn'>;
+export type NonSensitivePatients = Omit<Patient, 'ssn' | 'entries'  >;
 
 export enum Gender {
     male = 'male',
