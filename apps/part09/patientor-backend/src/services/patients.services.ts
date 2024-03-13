@@ -1,8 +1,8 @@
-import data from "../utils/patients";
-import {  NewPatientEntry, NonSensitivePatients, Patient,  } from "../utils/types";
+import patientsData from '../data/patients';
+import {  NewPatientEntry, NonSensitivePatients, Patient } from "../utils/types";
 import { v4 as uuidv4 } from 'uuid';
 
-const patients: Patient[] = data;
+const patients: Patient[] = patientsData;
 
 const getPatients = ():Patient[] => {
     return patients;
@@ -42,6 +42,16 @@ const addPatient = (patientEntry: NewPatientEntry): Patient | null => {
     };
     patients.push(newPatient);
     return newPatient;
+};
+
+const addEntry = (id: string, entry: NewPatientEntry): Patient | null => {
+    const patient = patients.find(p => p.id === id);
+    if (patient) {
+        patient.entries.push(entry);
+        return patient;
+    } else {
+        return null;
+    }
 };
 
 

@@ -1,7 +1,7 @@
-import data from "../utils/diagnoses";
+import diagnosesData from "../data/diagnoses";
 import { Diagnoses } from "../utils/types";
 
-const diagnoses: Diagnoses[] = data;
+const diagnoses: Diagnoses[] = diagnosesData;
 export const getDiagnoses = ():Diagnoses[] => {
     return diagnoses;
 };
