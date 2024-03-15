@@ -6,8 +6,12 @@ import FemaleIcon from './icons/FemaleIcon';
 import MaleIcon from './icons/MaleIcon';
 import EntriesInfo from './EntriesInfo';
 import diagnosesService from '../services/diagnoses';
+import { Button } from '@mui/material';
+import AddEntryIcon from './icons/AddEntryIcon';
+import AddEntryModal from './AddEntryModal/AddEntryModal';
 
 export const PatientInfo: React.FC = () => {
+    const [modalOpen, setModalOpen] = useState<boolean>(false);
     const [patient, setPatient] = useState<Patient | null>(null);
     const [diagnoses, setDiagnoses] = useState<Diagnoses[] | null>(null);
 
@@ -19,6 +23,9 @@ export const PatientInfo: React.FC = () => {
         padding: '10px',
         margin: '10px'
     };
+
+    const openModal = (): void => setModalOpen(true);
+    const closeModal = (): void => setModalOpen(false);
 
     useEffect(() => {
         console.log('id', id);
@@ -53,8 +60,19 @@ export const PatientInfo: React.FC = () => {
             </div>
             <p>ssn: {patient.ssn}</p>
             <p>occupation: {patient.occupation}</p>
-            <h3>Entries</h3>
+            <AddEntryModal 
+                modalOpen={modalOpen}
+                onClose={() => closeModal()}
+                diagnoses={diagnoses} 
+            />
+            <div>
+                <h3>Entries</h3>
+                <Button variant="contained" onClick={() => openModal()}>
+                    <AddEntryIcon />
+                </Button>
+            </div>
             <EntriesInfo entries={patient.entries} diagnoses={diagnoses} />
+           
         </div>
     );
 };

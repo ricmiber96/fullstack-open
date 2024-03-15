@@ -1,4 +1,4 @@
-import { EntryWithoutId, Gender, NewPatientEntry } from "./types";
+import { Gender, NewPatientEntry } from "./types";
 
 
 const isString = (text: unknown): text is string => {
@@ -59,27 +59,4 @@ const toNewPatientEntry = (object: unknown): NewPatientEntry => {
     throw new Error('Incorrect data: some fields are missing');
 };
 
-const toNewEntry = (object: unknown): EntryWithoutId => {
-    console.log(object);
-    if (!object || typeof object !== 'object') {
-        throw new Error('Incorrect or missing object: ' + object);
-    }
-    if ('description' in object && 'date' in object && 'specialist' in object) { 
-    const newEntry: EntryWithoutId = {
-        description: parseName(object.description),
-        date: parseDateOfBirth(object.date),
-        specialist: parseName(object.specialist),
-        diagnosisCodes: []
-        };
-    return newEntry;
-    }
-    throw new Error('Incorrect data: some fields are missing');
-};
-
-export default {
-    toNewPatientEntry,
-    toNewEntry  
-};
-
-
-   
+export default toNewPatientEntry;
