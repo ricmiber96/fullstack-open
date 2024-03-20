@@ -1,14 +1,15 @@
-import { Button, Grid, Input, InputLabel, MenuItem, OutlinedInput, Select, SelectChangeEvent, TextField } from '@mui/material';
+import { Button, Grid, InputLabel, MenuItem, OutlinedInput, Select, SelectChangeEvent, TextField } from '@mui/material';
 import React, { useState } from 'react';
-import { Diagnoses, HealthCheckRating } from '../../types';
+import { Diagnoses, EntryWithoutId, HealthCheckRating } from '../../types';
 
 type Props = {
     // TODO: Define the component props
     onCancel: () => void;
+    onSubmit: (values: EntryWithoutId) => void;
     diagnoses: Diagnoses[];
 };
 
-export const AddEntryForm: React.FC<Props> = ({onCancel, diagnoses }) => {
+export const AddEntryForm: React.FC<Props> = ({onCancel, onSubmit, diagnoses }) => {
 
     const diagnosisOptions = diagnoses.map((diagnosis) => {
         return { code: diagnosis.code, name: diagnosis.name };
@@ -53,6 +54,48 @@ export const AddEntryForm: React.FC<Props> = ({onCancel, diagnoses }) => {
         setDiagnosisArray(value);
     });
 
+    const addNewEntry = (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+
+        const newEntry = {
+            description,
+            date,
+            specialist,
+            diagnosisCodes: diagnosisArray
+        };
+
+        switch (type) {
+            case 'HealthCheck':
+                onSubmit ({
+                    type: "HealthCheck",
+                    ...newEntry,
+                    healthCheckRating
+                }); 
+                break;
+            case 'Hospital':
+                onSubmit ({
+                    type: "Hospital",
+                    ...newEntry,
+                    discharge: {
+                        date: dischargeDate,
+                        criteria: dischargeCriteria
+                    }
+                }); 
+                break;
+            case 'OccupationalHealthcare':
+                onSubmit({
+                    type:  "OccupationalHealthcare",
+                    ...newEntry,
+                    employerName: employerName,
+                    sickLeave: sickLeaveStartDate && sickLeaveEndDate ? {
+                        startDate: sickLeaveStartDate,
+                        endDate: sickLeaveEndDate
+                    }: undefined
+                });
+                break;
+            }
+        };
+
 
     return (
         <div>
@@ -69,7 +112,7 @@ export const AddEntryForm: React.FC<Props> = ({onCancel, diagnoses }) => {
                     <MenuItem value="OccupationalHealthcare">Occupational Healthcare</MenuItem>
                 </Select>
 
-            <form>
+            <form onSubmit={addNewEntry}>
                 <TextField 
                     label="Description" 
                     fullWidth

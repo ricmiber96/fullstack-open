@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Diagnoses, Patient, RouteParams } from '../types';
+import { Diagnoses, EntryWithoutId, Patient, RouteParams } from '../types';
 import patientService from '../services/patients';
 import FemaleIcon from './icons/FemaleIcon';
 import MaleIcon from './icons/MaleIcon';
@@ -51,6 +51,21 @@ export const PatientInfo: React.FC = () => {
         return <div>Loading...</div>;
     }
 
+    const submitNewEntry = async (values: EntryWithoutId) => {
+        try {
+            if (patient && id) {
+                console.log('values', values);
+                const newEntry = await patientService.addEntry(id, values);
+                if (newEntry) {
+                    setPatient({ ...patient, entries: [...patient.entries, newEntry] });
+                    console.log('newEntry', newEntry);
+                }
+            }
+        } catch (err: unknown) {
+            console.error(err);
+        }
+    };
+
 
     return (
         <div style={styleInfo}>
@@ -60,7 +75,8 @@ export const PatientInfo: React.FC = () => {
             </div>
             <p>ssn: {patient.ssn}</p>
             <p>occupation: {patient.occupation}</p>
-            <AddEntryModal 
+            <AddEntryModal
+                onSubmit={submitNewEntry}
                 modalOpen={modalOpen}
                 onClose={() => closeModal()}
                 diagnoses={diagnoses} 
